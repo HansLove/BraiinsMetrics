@@ -6,21 +6,29 @@
   <title>Hashpower Market Overview · Braiins</title>
   <style>
     :root {
-      --bg: #0a0e14;
-      --bg-elevated: #121826;
-      --surface: #161d2a;
+      --bg: #070b10;
+      --bg-elevated: #0f1419;
+      --surface: #151c28;
       --border: #2a3548;
       --text: #f0f4fa;
       --muted: #8b9bb8;
       --accent: #f7931a;
+      --accent-2: #34d399;
       --bid: #34d399;
       --bid-dim: rgba(52, 211, 153, 0.15);
       --ask: #f87171;
       --ask-dim: rgba(248, 113, 113, 0.15);
       --warn: #fbbf24;
-      --radius-lg: 16px;
+      --btc-chip-bg: rgba(247, 147, 26, 0.1);
+      --live-dot: #34d399;
+      --manual-dot: #fbbf24;
+      --cached-dot: #8b9bb8;
+      --bg-grad-from: rgba(247, 147, 26, 0.12);
+      --bg-grad-to: rgba(52, 211, 153, 0.06);
+      --radius-lg: 18px;
       --radius: 12px;
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.25);
     }
     * { box-sizing: border-box; }
     body {
@@ -28,21 +36,21 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
       background: var(--bg);
       background-image:
-        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(247, 147, 26, 0.08), transparent),
-        radial-gradient(ellipse 80% 50% at 100% 50%, rgba(52, 211, 153, 0.04), transparent);
+        radial-gradient(ellipse 140% 90% at 50% -25%, var(--bg-grad-from), transparent 55%),
+        radial-gradient(ellipse 90% 60% at 100% 20%, var(--bg-grad-to), transparent),
+        radial-gradient(ellipse 70% 50% at 0% 80%, rgba(52, 211, 153, 0.05), transparent);
       color: var(--text);
       line-height: 1.5;
       min-height: 100vh;
     }
     .wrap {
-      max-width: 1120px;
+      max-width: 1140px;
       margin: 0 auto;
       padding: 1.5rem 1.25rem 3rem;
     }
 
-    /* Hero */
     .hero {
-      margin-bottom: 2rem;
+      margin-bottom: 1.75rem;
     }
     .hero-top {
       display: flex;
@@ -60,36 +68,31 @@
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      background: linear-gradient(135deg, rgba(247, 147, 26, 0.25), rgba(247, 147, 26, 0.08));
+      background: linear-gradient(135deg, rgba(247, 147, 26, 0.28), rgba(247, 147, 26, 0.08));
       color: var(--accent);
-      border: 1px solid rgba(247, 147, 26, 0.35);
+      border: 1px solid rgba(247, 147, 26, 0.4);
       margin-bottom: 0.65rem;
+      box-shadow: var(--shadow-soft);
     }
     .hero h1 {
-      margin: 0 0 0.4rem;
-      font-size: clamp(1.5rem, 4vw, 1.85rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      margin: 0 0 0.45rem;
+      font-size: clamp(1.55rem, 4vw, 2rem);
+      font-weight: 750;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 0%, #c8d4e6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
     .hero-sub {
       margin: 0;
       color: var(--muted);
       font-size: 0.95rem;
-      max-width: 36rem;
+      max-width: 38rem;
+      line-height: 1.55;
     }
-    .hero-meta {
-      text-align: right;
-      font-size: 0.8125rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-    .hero-meta strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
     .hero-nav {
-      margin-top: 0.75rem;
+      margin-top: 0.85rem;
       font-size: 0.875rem;
     }
     .hero-nav a {
@@ -97,8 +100,104 @@
       text-decoration: none;
       font-weight: 600;
     }
-    .hero-nav a:hover {
-      text-decoration: underline;
+    .hero-nav a:hover { text-decoration: underline; }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.75rem;
+      min-width: min(100%, 320px);
+    }
+    .hero-meta {
+      text-align: right;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .hero-meta strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* BTC bar */
+    .btc-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    .btc-chip {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.45rem 0.65rem;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      background: var(--btc-chip-bg);
+      border: 1px solid rgba(247, 147, 26, 0.35);
+      font-size: 0.8125rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .btc-chip strong {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .btc-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .btc-dot.live { background: var(--live-dot); box-shadow: 0 0 10px var(--live-dot); }
+    .btc-dot.manual { background: var(--manual-dot); box-shadow: 0 0 8px var(--manual-dot); }
+    .btc-dot.cached { background: var(--cached-dot); }
+    .btc-dot.none { background: #4b5563; }
+    .btc-meta {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .btc-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .btn-mini {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-mini:hover {
+      border-color: rgba(247, 147, 26, 0.45);
+      background: var(--bg-elevated);
+    }
+    .btc-override-panel {
+      width: 100%;
+      max-width: 280px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .btc-override-panel input {
+      width: 7rem;
+      padding: 0.4rem 0.55rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0d1117;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
     }
 
     .status-line {
@@ -120,15 +219,14 @@
       color: #e9d5ff;
     }
 
-    /* Sections */
     .section {
       margin-top: 2rem;
     }
     .section-title {
       margin: 0 0 0.75rem;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--muted);
     }
@@ -139,110 +237,145 @@
       max-width: 42rem;
     }
 
-    /* Headline price */
-    .headline-row {
+    /* KPI strip — 3 tiles */
+    .kpi-strip {
       display: grid;
       gap: 1rem;
       grid-template-columns: 1fr;
     }
     @media (min-width: 900px) {
-      .headline-row {
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-        align-items: stretch;
+      .kpi-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
-    .hero-card {
-      background: linear-gradient(145deg, var(--bg-elevated) 0%, var(--surface) 100%);
-      border: 1px solid var(--border);
+    .kpi-tile {
+      position: relative;
+      overflow: hidden;
       border-radius: var(--radius-lg);
-      padding: 1.35rem 1.5rem;
-      box-shadow: var(--shadow);
+      padding: 1.2rem 1.25rem 1.15rem;
+      border: 1px solid var(--border);
+      background: linear-gradient(155deg, var(--bg-elevated) 0%, var(--surface) 100%);
+      box-shadow: var(--shadow-soft);
+      transition: border-color 0.25s ease, transform 0.2s ease;
     }
-    .hero-card .eyebrow {
-      font-size: 0.7rem;
+    .kpi-tile:hover {
+      border-color: #3d4d63;
+    }
+    .kpi-tile-icon {
+      position: absolute;
+      right: 0.75rem;
+      top: 0.65rem;
+      width: 52px;
+      height: 52px;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+    .kpi-tile .eyebrow {
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.11em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.4rem;
     }
-    .hero-price-main {
-      font-size: clamp(2rem, 5vw, 2.75rem);
+    .kpi-tile-value {
+      font-size: clamp(1.35rem, 3vw, 1.75rem);
       font-weight: 800;
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.03em;
-      line-height: 1.15;
+      line-height: 1.2;
       color: var(--text);
     }
-    .hero-price-sub {
-      margin-top: 0.5rem;
-      font-size: 1rem;
+    .kpi-tile-sub {
+      margin-top: 0.55rem;
+      font-size: 0.82rem;
       color: var(--muted);
       font-variant-numeric: tabular-nums;
+      line-height: 1.45;
     }
-    .hero-price-sub span {
-      color: var(--accent);
-      font-weight: 600;
+    .kpi-tile-sub .accent { color: var(--accent); font-weight: 600; }
+    .kpi-tile-sub .usd { color: var(--accent-2); font-weight: 600; }
+    .kpi-tile.spread-pos .kpi-tile-value { color: var(--bid); }
+    .kpi-tile.spread-neg .kpi-tile-value { color: var(--warn); }
+
+    @keyframes valuePulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .value-pulse {
+      animation: valuePulse 0.28s ease-out;
     }
 
-    .metrics-grid {
+    /* Book row */
+    .book-row {
       display: grid;
-      gap: 0.75rem;
-      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      grid-template-columns: 1fr;
     }
-    @media (min-width: 600px) {
-      .metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
+    @media (min-width: 700px) {
+      .book-row {
+        grid-template-columns: 1fr 1fr;
       }
     }
-
-    .card {
-      background: var(--surface);
+    .book-card {
+      border-radius: var(--radius-lg);
+      padding: 1.2rem 1.3rem;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem 1.1rem;
-      transition: border-color 0.2s ease;
+      background: linear-gradient(160deg, var(--surface) 0%, #121a26 100%);
+      box-shadow: var(--shadow-soft);
     }
-    .card:hover {
-      border-color: #3d4d63;
+    .book-card.bid-side {
+      border-color: rgba(52, 211, 153, 0.35);
+      background: linear-gradient(165deg, rgba(52, 211, 153, 0.08), var(--surface));
     }
-    .card .label {
-      font-size: 0.68rem;
+    .book-card.ask-side {
+      border-color: rgba(248, 113, 113, 0.35);
+      background: linear-gradient(165deg, rgba(248, 113, 113, 0.07), var(--surface));
+    }
+    .book-label {
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.5rem;
     }
-    .card .value {
-      font-size: 1.15rem;
-      font-weight: 700;
+    .book-card.bid-side .book-label { color: var(--bid); }
+    .book-card.ask-side .book-label { color: var(--ask); }
+    .book-sats {
+      font-size: 1.45rem;
+      font-weight: 800;
       font-variant-numeric: tabular-nums;
-      word-break: break-word;
+      letter-spacing: -0.02em;
     }
-    .card.bid .value { color: var(--bid); }
-    .card.ask .value { color: var(--ask); }
-    .card.spread .value { color: var(--warn); }
-    .card.unit .value { color: var(--text); }
+    .book-card.bid-side .book-sats { color: var(--bid); }
+    .book-card.ask-side .book-sats { color: var(--ask); }
+    .book-line {
+      margin-top: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .book-line strong { color: var(--accent); font-weight: 600; }
+    .book-line.usd strong { color: var(--accent-2); }
 
-    /* Depth panel */
     .depth-panel {
-      padding: 1.25rem 1.35rem;
+      padding: 1.35rem 1.4rem;
     }
     .liquidity-label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.75rem;
     }
     .stacked-wrap {
       margin-bottom: 1.25rem;
     }
     .stacked-bar {
       display: flex;
-      height: 14px;
+      height: 16px;
       border-radius: 999px;
       overflow: hidden;
       border: 1px solid var(--border);
@@ -251,20 +384,20 @@
     .stacked-bar .seg-bid {
       background: linear-gradient(90deg, #059669, var(--bid));
       min-width: 2px;
-      transition: width 0.4s ease;
+      transition: width 0.45s ease;
     }
     .stacked-bar .seg-ask {
       background: linear-gradient(90deg, #dc2626, var(--ask));
       min-width: 2px;
-      transition: width 0.4s ease;
+      transition: width 0.45s ease;
     }
     .stacked-legend {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       gap: 0.75rem;
-      margin-top: 0.65rem;
-      font-size: 0.8125rem;
+      margin-top: 0.7rem;
+      font-size: 0.83rem;
     }
     .stacked-legend span {
       font-variant-numeric: tabular-nums;
@@ -279,7 +412,7 @@
       margin-top: 1rem;
     }
     .chip {
-      padding: 0.4rem 0.75rem;
+      padding: 0.42rem 0.8rem;
       border-radius: 999px;
       font-size: 0.8125rem;
       font-weight: 600;
@@ -288,29 +421,29 @@
       background: var(--bg-elevated);
       color: var(--text);
     }
-    .chip.bid { border-color: rgba(52, 211, 153, 0.4); color: var(--bid); }
-    .chip.ask { border-color: rgba(248, 113, 113, 0.4); color: var(--ask); }
+    .chip.bid { border-color: rgba(52, 211, 153, 0.45); color: var(--bid); }
+    .chip.ask { border-color: rgba(248, 113, 113, 0.45); color: var(--ask); }
 
     .bars {
       display: flex;
       flex-direction: column;
-      gap: 0.95rem;
+      gap: 1rem;
     }
     .bar-row {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 0.875rem;
+      gap: 0.85rem;
+      font-size: 0.88rem;
     }
     .bar-row > span:first-of-type {
-      width: 8rem;
+      width: 8.5rem;
       flex-shrink: 0;
       color: var(--muted);
       font-weight: 500;
     }
     .bar-track {
       flex: 1;
-      height: 12px;
+      height: 13px;
       background: #0d1117;
       border-radius: 999px;
       overflow: hidden;
@@ -319,16 +452,62 @@
     .bar-fill {
       height: 100%;
       border-radius: 999px;
-      transition: width 0.35s ease;
+      transition: width 0.38s ease;
     }
     .bar-fill.bid { background: linear-gradient(90deg, #059669, var(--bid)); }
     .bar-fill.ask { background: linear-gradient(90deg, #dc2626, var(--ask)); }
     .bar-row > span:last-of-type {
-      width: 4rem;
+      width: 4.25rem;
       text-align: right;
       font-variant-numeric: tabular-nums;
       font-weight: 600;
       color: var(--text);
+    }
+
+    .trades-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 720px) {
+      .trades-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    .trade-card {
+      border-radius: var(--radius-lg);
+      padding: 1.15rem 1.2rem;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--surface) 0%, #121920 100%);
+      box-shadow: var(--shadow-soft);
+    }
+    .trade-card .label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+    }
+    .trade-card .sats {
+      font-size: 1.2rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .trade-card .btc-line,
+    .trade-card .usd-line {
+      margin-top: 0.35rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .trade-card .btc-line strong { color: var(--accent); }
+    .trade-card .usd-line strong { color: var(--accent-2); }
+    .trades-meta {
+      grid-column: 1 / -1;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
     }
 
     .grid {
@@ -336,16 +515,31 @@
       gap: 0.75rem;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
-    .trades-meta {
-      grid-column: 1 / -1;
-      font-size: 0.8125rem;
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.95rem 1rem;
+      transition: border-color 0.2s ease;
+    }
+    .card:hover { border-color: #3d4d63; }
+    .card .label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--muted);
-      padding: 0.35rem 0 0;
+      margin-bottom: 0.35rem;
+    }
+    .card .value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
     }
 
     footer {
-      margin-top: 2.5rem;
-      padding-top: 1.25rem;
+      margin-top: 2.75rem;
+      padding-top: 1.35rem;
       border-top: 1px solid var(--border);
       font-size: 0.8125rem;
       color: var(--muted);
@@ -354,6 +548,8 @@
       color: var(--accent);
       font-weight: 600;
     }
+
+    [hidden] { display: none !important; }
   </style>
 </head>
 <body>
@@ -363,25 +559,81 @@
         <div>
           <span class="badge">Braiins API</span>
           <h1>Hashpower Market Overview</h1>
-          <p class="hero-sub">Spot order book and recent trade snapshot—priced in sats per market unit.</p>
+          <p class="hero-sub">
+            Live reference for spot hashpower pricing: order book mid, per-PH/day energy-equivalent rates (via BTC), and recent trades—your enterprise snapshot of the market in one glance.
+          </p>
           <p class="hero-nav"><a href="calculator.html">Margin calculator (RentHashRate)</a></p>
         </div>
-        <div class="hero-meta" id="hero-meta" hidden>
-          <div><strong id="meta-source">—</strong></div>
-          <div id="meta-updated">—</div>
+        <div class="hero-right">
+          <div class="btc-bar">
+            <div class="btc-chip" id="btc-chip" aria-live="polite">
+              <span class="btc-dot none" id="btc-dot"></span>
+              <strong id="btc-price-display">—</strong>
+              <span class="btc-meta" id="btc-meta"></span>
+            </div>
+            <div class="btc-actions">
+              <button type="button" class="btn-mini" id="btn-btc-refresh" title="Refresh BTC price">Refresh</button>
+              <button type="button" class="btn-mini" id="btn-btc-override-toggle">Override</button>
+            </div>
+          </div>
+          <div class="btc-override-panel" id="btc-override-panel" hidden>
+            <input type="number" id="in-btc-override" placeholder="USD" step="0.01" min="0" />
+            <button type="button" class="btn-mini" id="btn-btc-use">Use</button>
+          </div>
+          <div class="hero-meta" id="hero-meta" hidden>
+            <div><strong id="meta-source">—</strong></div>
+            <div id="meta-updated">—</div>
+          </div>
         </div>
       </div>
       <div id="status" class="status-line">Loading report…</div>
     </header>
 
-    <div class="section headline-row">
-      <div class="hero-card" id="hero-price">
-        <div class="eyebrow">Mid price (reference)</div>
-        <div class="hero-price-main" id="hero-mid">—</div>
-        <div class="hero-price-sub" id="hero-mid-btc"></div>
+    <div class="section kpi-strip" id="kpi-strip">
+      <div class="kpi-tile" id="kpi-mid-tile">
+        <svg class="kpi-tile-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <div class="eyebrow">Mid price · market unit</div>
+        <div class="kpi-tile-value value-target" id="kpi-mid-sats">—</div>
+        <div class="kpi-tile-sub" id="kpi-mid-sub"></div>
       </div>
-      <div class="metrics-grid" id="price-support"></div>
+      <div class="kpi-tile" id="kpi-ph-tile">
+        <svg class="kpi-tile-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <div class="eyebrow">Mid · per PH / day</div>
+        <div class="kpi-tile-value value-target" id="kpi-ph-sats">—</div>
+        <div class="kpi-tile-sub" id="kpi-ph-sub"></div>
+      </div>
+      <div class="kpi-tile" id="kpi-spread-tile">
+        <svg class="kpi-tile-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4 16l8-8 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="eyebrow">Spread (ask − bid)</div>
+        <div class="kpi-tile-value value-target" id="kpi-spread-sats">—</div>
+        <div class="kpi-tile-sub" id="kpi-spread-sub"></div>
+      </div>
     </div>
+
+    <section class="section">
+      <h2 class="section-title">Top of book</h2>
+      <div class="book-row">
+        <div class="book-card bid-side">
+          <div class="book-label">Best bid</div>
+          <div class="book-sats value-target" id="book-bid-sats">—</div>
+          <div class="book-line">≈ <strong id="book-bid-btc">—</strong> BTC</div>
+          <div class="book-line usd">≈ <strong id="book-bid-usd">—</strong></div>
+        </div>
+        <div class="book-card ask-side">
+          <div class="book-label">Best ask</div>
+          <div class="book-sats value-target" id="book-ask-sats">—</div>
+          <div class="book-line">≈ <strong id="book-ask-btc">—</strong> BTC</div>
+          <div class="book-line usd">≈ <strong id="book-ask-usd">—</strong></div>
+        </div>
+      </div>
+    </section>
 
     <section class="section">
       <h2 class="section-title">Book depth &amp; hash rate</h2>
@@ -404,7 +656,28 @@
 
     <section class="section">
       <h2 class="section-title">Recent trades</h2>
-      <div class="grid" id="trades"></div>
+      <p class="section-note">Sample of latest fills—priced in sats with BTC and USD equivalents using the BTC reference above.</p>
+      <div class="trades-grid" id="trades-wrap">
+        <div class="trade-card">
+          <div class="label">Average</div>
+          <div class="sats value-target" id="trade-avg-sats">—</div>
+          <div class="btc-line">≈ <strong id="trade-avg-btc">—</strong> BTC</div>
+          <div class="usd-line">≈ <strong id="trade-avg-usd">—</strong></div>
+        </div>
+        <div class="trade-card">
+          <div class="label">Range low</div>
+          <div class="sats value-target" id="trade-min-sats">—</div>
+          <div class="btc-line">≈ <strong id="trade-min-btc">—</strong> BTC</div>
+          <div class="usd-line">≈ <strong id="trade-min-usd">—</strong></div>
+        </div>
+        <div class="trade-card">
+          <div class="label">Range high</div>
+          <div class="sats value-target" id="trade-max-sats">—</div>
+          <div class="btc-line">≈ <strong id="trade-max-btc">—</strong> BTC</div>
+          <div class="usd-line">≈ <strong id="trade-max-usd">—</strong></div>
+        </div>
+        <div class="trades-meta" id="trades-meta"></div>
+      </div>
     </section>
 
     <section class="section">
@@ -414,12 +687,23 @@
     </section>
 
     <footer>
-      Data from <span class="brand">Braiins Hashpower</span> via the report generated by your metrics script.
+      Data from <span class="brand">Braiins Hashpower</span> via the report generated by your metrics script. BTC spot from CoinGecko for display only.
     </footer>
   </div>
 
   <script>
     const $ = (id) => document.getElementById(id);
+
+    const SATS_PER_BTC = 100_000_000;
+    const LS_BTC = "rh_btc_usd";
+    const COINGECKO =
+      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd";
+
+    /** @type {{ value: number|null, source: string, at: number|null }} */
+    let btcState = { value: null, source: "none", at: null };
+    /** @type {object|null} */
+    let dashboardReport = null;
+    let dashboardPaintCount = 0;
 
     function fmtNum(n, digits = 4) {
       if (n === null || n === undefined || Number.isNaN(n)) return "—";
@@ -432,6 +716,20 @@
     function fmtSats(s) {
       if (s === null || s === undefined || Number.isNaN(s)) return "—";
       return `${fmtNum(s, 2)} sats`;
+    }
+
+    function fmtUsdAmount(n, digits = 2) {
+      if (n === null || n === undefined || Number.isNaN(n)) return "—";
+      const sign = n < 0 ? "-" : "";
+      const v = Math.abs(n);
+      return (
+        sign +
+        "$" +
+        v.toLocaleString(undefined, {
+          maximumFractionDigits: digits,
+          minimumFractionDigits: 0,
+        })
+      );
     }
 
     function fmtDate(ts) {
@@ -448,11 +746,161 @@
       }
     }
 
-    function card(label, value, cls = "") {
-      const d = document.createElement("div");
-      d.className = "card " + cls;
-      d.innerHTML = `<div class="label">${label}</div><div class="value">${value}</div>`;
-      return d;
+    function satsToBtc(sats) {
+      if (sats === null || sats === undefined || Number.isNaN(sats)) return null;
+      return sats / SATS_PER_BTC;
+    }
+
+    /** USD value for a sats-denominated price (same formula as midPriceBTC * btcUsd conceptually). */
+    function satsToUsd(sats, btcUsd) {
+      if (
+        btcUsd === null ||
+        btcUsd === undefined ||
+        Number.isNaN(btcUsd) ||
+        sats === null ||
+        sats === undefined ||
+        Number.isNaN(sats)
+      ) {
+        return null;
+      }
+      return (sats / SATS_PER_BTC) * btcUsd;
+    }
+
+    function readCachedBtc() {
+      try {
+        const raw = localStorage.getItem(LS_BTC);
+        if (!raw) return null;
+        const o = JSON.parse(raw);
+        if (typeof o.v === "number" && Number.isFinite(o.v) && o.v > 0) {
+          return { value: o.v, at: typeof o.at === "number" ? o.at : null, manual: !!o.manual };
+        }
+      } catch {
+        /* ignore */
+      }
+      return null;
+    }
+
+    function writeCachedBtc(value, manual) {
+      try {
+        localStorage.setItem(
+          LS_BTC,
+          JSON.stringify({ v: value, at: Date.now(), manual: !!manual })
+        );
+      } catch {
+        /* ignore */
+      }
+    }
+
+    function setBtc(value, source) {
+      btcState = {
+        value: value != null && Number.isFinite(value) ? value : null,
+        source,
+        at: Date.now(),
+      };
+      if (btcState.value != null && btcState.value > 0) {
+        writeCachedBtc(btcState.value, source === "manual");
+      }
+      renderBtcChip();
+      renderDashboard();
+    }
+
+    function renderBtcChip() {
+      const priceEl = $("btc-price-display");
+      const metaEl = $("btc-meta");
+      const dot = $("btc-dot");
+      dot.className = "btc-dot";
+
+      if (btcState.value != null && btcState.value > 0) {
+        priceEl.textContent = fmtUsdAmount(btcState.value, 2);
+        let meta = "";
+        if (btcState.source === "live") {
+          dot.classList.add("live");
+          meta = "Live · CoinGecko · " + fmtTime(btcState.at);
+        } else if (btcState.source === "manual") {
+          dot.classList.add("manual");
+          meta = "Manual override · " + fmtTime(btcState.at);
+        } else if (btcState.source === "cached") {
+          dot.classList.add("cached");
+          meta =
+            "Cached" +
+            (btcState.at ? " · " + cacheAgeMinutes(btcState.at) : "") +
+            " · " +
+            fmtTime(btcState.at);
+        } else {
+          dot.classList.add("none");
+          meta = fmtTime(btcState.at);
+        }
+        metaEl.textContent = meta;
+      } else {
+        priceEl.textContent = "—";
+        dot.classList.add("none");
+        metaEl.textContent =
+          "Set override or wait for network — USD equivalents need a BTC price.";
+      }
+    }
+
+    function fmtTime(ms) {
+      if (!ms) return "";
+      try {
+        return new Date(ms).toLocaleTimeString(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      } catch {
+        return "";
+      }
+    }
+
+    function cacheAgeMinutes(atMs) {
+      const m = Math.floor((Date.now() - atMs) / 60000);
+      if (m < 1) return "<1m ago";
+      return m + "m ago";
+    }
+
+    async function loadBtc(options = {}) {
+      const force = !!options.force;
+      if (!force && btcState.source === "manual") {
+        renderBtcChip();
+        return;
+      }
+
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 8000);
+
+      try {
+        const res = await fetch(COINGECKO, { signal: ctrl.signal, cache: "no-store" });
+        clearTimeout(t);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        const usd = data?.bitcoin?.usd;
+        if (typeof usd === "number" && usd > 0) {
+          setBtc(usd, "live");
+          return;
+        }
+        throw new Error("Bad payload");
+      } catch {
+        clearTimeout(t);
+        const c = readCachedBtc();
+        if (c && c.value > 0) {
+          btcState = {
+            value: c.value,
+            source: c.manual ? "manual" : "cached",
+            at: c.at || Date.now(),
+          };
+          renderBtcChip();
+          renderDashboard();
+        } else {
+          renderBtcChip();
+          renderDashboard();
+        }
+      }
+    }
+
+    function applyManualBtc() {
+      const raw = parseFloat($("in-btc-override").value);
+      if (!Number.isFinite(raw) || raw <= 0) return;
+      setBtc(raw, "manual");
+      $("btc-override-panel").hidden = true;
     }
 
     function barRow(label, value, max, kind) {
@@ -471,7 +919,163 @@
       while (el.firstChild) el.removeChild(el.firstChild);
     }
 
-    async function load() {
+    function pulseTargets() {
+      document.querySelectorAll(".value-target").forEach((el) => {
+        el.classList.remove("value-pulse");
+        void el.offsetWidth;
+        el.classList.add("value-pulse");
+      });
+    }
+
+    function card(label, value) {
+      const d = document.createElement("div");
+      d.className = "card";
+      d.innerHTML = `<div class="label">${label}</div><div class="value">${value}</div>`;
+      return d;
+    }
+
+    function fillTripleSatsBtcUsd(sats, ids) {
+      $(ids.sats).textContent = fmtSats(sats);
+      const b = satsToBtc(sats);
+      $(ids.btc).textContent = b != null ? fmtNum(b, 8) : "—";
+      const u = satsToUsd(sats, btcState.value);
+      $(ids.usd).textContent = u != null ? fmtUsdAmount(u, 2) : "—";
+    }
+
+    function renderDashboard() {
+      const report = dashboardReport;
+      const btc = btcState.value;
+
+      if (!report) return;
+
+      const ob = report.orderBookMetrics || {};
+      const unit = report.marketUnit || ob.unit || "—";
+
+      /* KPI — mid market unit */
+      const midSats = ob.midPriceSats;
+      $("kpi-mid-sats").textContent = midSats != null ? fmtSats(midSats) : "—";
+      const midBtc = ob.midPriceBTC != null ? ob.midPriceBTC : satsToBtc(midSats);
+      const midUsd = satsToUsd(midSats, btc);
+      $("kpi-mid-sub").innerHTML =
+        midBtc != null && !Number.isNaN(midBtc)
+          ? `≈ <span class="accent">${fmtNum(midBtc, 8)}</span> BTC · <span class="usd">${midUsd != null ? fmtUsdAmount(midUsd, 2) : "—"}</span>`
+          : "";
+
+      /* KPI — mid per PH/day: EH/day price / 1000 → sats per PH/day */
+      const midPerPhSats = midSats != null ? midSats / 1000 : null;
+      $("kpi-ph-sats").textContent = midPerPhSats != null ? fmtSats(midPerPhSats) : "—";
+      const midPhBtc = satsToBtc(midPerPhSats);
+      const midPhUsd = satsToUsd(midPerPhSats, btc);
+      $("kpi-ph-sub").innerHTML =
+        midPhBtc != null
+          ? `≈ <span class="accent">${fmtNum(midPhBtc, 8)}</span> BTC · <span class="usd">${midPhUsd != null ? fmtUsdAmount(midPhUsd, 2) : "—"}</span> per PH/day`
+          : "";
+
+      /* KPI — spread */
+      const sp = ob.spreadSats;
+      const spTile = $("kpi-spread-tile");
+      spTile.classList.remove("spread-pos", "spread-neg");
+      if (sp != null && !Number.isNaN(sp)) {
+        $("kpi-spread-sats").textContent = fmtSats(sp);
+        const spBtc = satsToBtc(sp);
+        const spUsd = satsToUsd(sp, btc);
+        $("kpi-spread-sub").innerHTML =
+          spBtc != null
+            ? `≈ <span class="accent">${fmtNum(spBtc, 8)}</span> BTC · <span class="usd">${spUsd != null ? fmtUsdAmount(spUsd, 2) : "—"}</span>`
+            : "";
+        if (sp >= 0) spTile.classList.add("spread-pos");
+        else spTile.classList.add("spread-neg");
+      } else {
+        $("kpi-spread-sats").textContent = "—";
+        $("kpi-spread-sub").textContent = "";
+      }
+
+      /* Book */
+      fillTripleSatsBtcUsd(ob.bestBidSats, {
+        sats: "book-bid-sats",
+        btc: "book-bid-btc",
+        usd: "book-bid-usd",
+      });
+      fillTripleSatsBtcUsd(ob.bestAskSats, {
+        sats: "book-ask-sats",
+        btc: "book-ask-btc",
+        usd: "book-ask-usd",
+      });
+
+      /* Depth */
+      const bidHr = ob.visibleBidHashrate || 0;
+      const askHr = ob.visibleAskHashrate || 0;
+      const totalHr = bidHr + askHr;
+      const bidPct = totalHr > 0 ? (bidHr / totalHr) * 100 : 50;
+      const askPct = totalHr > 0 ? (askHr / totalHr) * 100 : 50;
+      $("seg-bid").style.width = `${bidPct}%`;
+      $("seg-ask").style.width = `${askPct}%`;
+      $("legend-bid-hr").textContent = fmtNum(bidHr, 2);
+      $("legend-ask-hr").textContent = fmtNum(askHr, 2);
+
+      const depth = $("depth-bars");
+      clearEl(depth);
+      const maxHr = Math.max(bidHr, askHr, 1);
+      depth.appendChild(barRow("Bid hash rate (sum)", bidHr, maxHr, "bid"));
+      depth.appendChild(barRow("Ask hash rate (sum)", askHr, maxHr, "ask"));
+
+      const bl = ob.visibleBidLevels || 0;
+      const al = ob.visibleAskLevels || 0;
+      const maxL = Math.max(bl, al, 1);
+      depth.appendChild(barRow("Bid levels (visible)", bl, maxL, "bid"));
+      depth.appendChild(barRow("Ask levels (visible)", al, maxL, "ask"));
+
+      const chips = $("level-chips");
+      clearEl(chips);
+      const c1 = document.createElement("span");
+      c1.className = "chip bid";
+      c1.textContent = `${bl} bid levels`;
+      const c2 = document.createElement("span");
+      c2.className = "chip ask";
+      c2.textContent = `${al} ask levels`;
+      chips.appendChild(c1);
+      chips.appendChild(c2);
+
+      /* Trades */
+      const tm = report.tradeMetrics || {};
+      fillTripleSatsBtcUsd(tm.avgTradePriceSats, {
+        sats: "trade-avg-sats",
+        btc: "trade-avg-btc",
+        usd: "trade-avg-usd",
+      });
+      fillTripleSatsBtcUsd(tm.minTradePriceSats, {
+        sats: "trade-min-sats",
+        btc: "trade-min-btc",
+        usd: "trade-min-usd",
+      });
+      fillTripleSatsBtcUsd(tm.maxTradePriceSats, {
+        sats: "trade-max-sats",
+        btc: "trade-max-btc",
+        usd: "trade-max-usd",
+      });
+
+      const meta = $("trades-meta");
+      const n = tm.tradesCount;
+      meta.textContent =
+        n != null
+          ? `Based on the ${Number(n).toLocaleString()} most recent trades in this sample.`
+          : "";
+
+      /* USD benchmarks */
+      const usd = report.usdBenchmarks || {};
+      const ug = $("usd");
+      clearEl(ug);
+      ug.appendChild(card("USD / PH / day", fmtNum(usd.usdPerPHDay, 4)));
+      ug.appendChild(card("USD / PH / hour", fmtNum(usd.usdPerPHHour, 6)));
+      ug.appendChild(card("USD / 100TH / day", fmtNum(usd.usdPer100THDay, 4)));
+      ug.appendChild(card("USD / 100TH / hour", fmtNum(usd.usdPer100THHour, 6)));
+      ug.appendChild(card("USD / 10TH / hour", fmtNum(usd.usdPer10THHour, 6)));
+
+      dashboardPaintCount++;
+      if (dashboardPaintCount > 1) pulseTargets();
+    }
+
+    async function loadReport() {
       const status = $("status");
       const heroMeta = $("hero-meta");
       try {
@@ -481,9 +1085,11 @@
           status.textContent =
             "Could not load braiins-report.json. Run your metrics script to refresh the report, then open this page through a local web server.";
           heroMeta.hidden = true;
+          dashboardReport = null;
           return;
         }
         const report = await res.json();
+        dashboardReport = report;
 
         status.className = "status-line ok";
         status.textContent = `Last updated · ${fmtDate(report.timestamp)} · ${report.source || "Braiins Hashpower API"}`;
@@ -494,83 +1100,7 @@
           ? `Snapshot · ${fmtDate(report.timestamp)}`
           : "";
 
-        const ob = report.orderBookMetrics || {};
-        const unit = report.marketUnit || ob.unit || "—";
-
-        $("hero-mid").textContent =
-          ob.midPriceSats != null ? fmtSats(ob.midPriceSats) : "—";
-        const btcLine = $("hero-mid-btc");
-        if (ob.midPriceBTC != null && !Number.isNaN(ob.midPriceBTC)) {
-          btcLine.innerHTML = `≈ <span>${fmtNum(ob.midPriceBTC, 8)}</span> BTC per ${unit}`;
-        } else {
-          btcLine.textContent = "";
-        }
-
-        const support = $("price-support");
-        clearEl(support);
-        support.appendChild(card("Best bid", fmtSats(ob.bestBidSats), "bid"));
-        support.appendChild(card("Best ask", fmtSats(ob.bestAskSats), "ask"));
-        support.appendChild(
-          card("Spread", ob.spreadSats != null ? fmtSats(ob.spreadSats) : "—", "spread")
-        );
-        support.appendChild(card("Market unit", unit, "unit"));
-
-        const bidHr = ob.visibleBidHashrate || 0;
-        const askHr = ob.visibleAskHashrate || 0;
-        const totalHr = bidHr + askHr;
-        const bidPct = totalHr > 0 ? (bidHr / totalHr) * 100 : 50;
-        const askPct = totalHr > 0 ? (askHr / totalHr) * 100 : 50;
-        $("seg-bid").style.width = `${bidPct}%`;
-        $("seg-ask").style.width = `${askPct}%`;
-        $("legend-bid-hr").textContent = fmtNum(bidHr, 2);
-        $("legend-ask-hr").textContent = fmtNum(askHr, 2);
-
-        const depth = $("depth-bars");
-        clearEl(depth);
-        const maxHr = Math.max(bidHr, askHr, 1);
-        depth.appendChild(barRow("Bid hash rate (sum)", bidHr, maxHr, "bid"));
-        depth.appendChild(barRow("Ask hash rate (sum)", askHr, maxHr, "ask"));
-
-        const bl = ob.visibleBidLevels || 0;
-        const al = ob.visibleAskLevels || 0;
-        const maxL = Math.max(bl, al, 1);
-        depth.appendChild(barRow("Bid levels (visible)", bl, maxL, "bid"));
-        depth.appendChild(barRow("Ask levels (visible)", al, maxL, "ask"));
-
-        const chips = $("level-chips");
-        clearEl(chips);
-        const c1 = document.createElement("span");
-        c1.className = "chip bid";
-        c1.textContent = `${bl} bid levels`;
-        const c2 = document.createElement("span");
-        c2.className = "chip ask";
-        c2.textContent = `${al} ask levels`;
-        chips.appendChild(c1);
-        chips.appendChild(c2);
-
-        const tm = report.tradeMetrics || {};
-        const tg = $("trades");
-        clearEl(tg);
-        tg.appendChild(card("Average trade", fmtSats(tm.avgTradePriceSats)));
-        tg.appendChild(card("Range low", fmtSats(tm.minTradePriceSats)));
-        tg.appendChild(card("Range high", fmtSats(tm.maxTradePriceSats)));
-        const meta = document.createElement("div");
-        meta.className = "trades-meta";
-        const n = tm.tradesCount;
-        meta.textContent =
-          n != null
-            ? `Based on the ${Number(n).toLocaleString()} most recent trades in this sample.`
-            : "";
-        tg.appendChild(meta);
-
-        const usd = report.usdBenchmarks || {};
-        const ug = $("usd");
-        clearEl(ug);
-        ug.appendChild(card("USD / PH / day", fmtNum(usd.usdPerPHDay, 4)));
-        ug.appendChild(card("USD / PH / hour", fmtNum(usd.usdPerPHHour, 6)));
-        ug.appendChild(card("USD / 100TH / day", fmtNum(usd.usdPer100THDay, 4)));
-        ug.appendChild(card("USD / 100TH / hour", fmtNum(usd.usdPer100THHour, 6)));
-        ug.appendChild(card("USD / 10TH / hour", fmtNum(usd.usdPer10THHour, 6)));
+        renderDashboard();
       } catch (e) {
         status.className = "status-line error";
         status.textContent =
@@ -578,10 +1108,53 @@
           (e && e.message ? e.message : String(e)) +
           " — open this page via HTTP (file URLs block loading JSON).";
         heroMeta.hidden = true;
+        dashboardReport = null;
       }
     }
 
-    load();
+    function initBtcFromStorage() {
+      const c = readCachedBtc();
+      if (c && c.value > 0) {
+        btcState = {
+          value: c.value,
+          source: c.manual ? "manual" : "cached",
+          at: c.at || Date.now(),
+        };
+      }
+      renderBtcChip();
+    }
+
+    $("btn-btc-refresh").addEventListener("click", () => {
+      loadBtc({ force: true });
+    });
+    $("btn-btc-override-toggle").addEventListener("click", () => {
+      const p = $("btc-override-panel");
+      p.hidden = !p.hidden;
+      if (!p.hidden) $("in-btc-override").focus();
+    });
+    $("btn-btc-use").addEventListener("click", applyManualBtc);
+    $("in-btc-override").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") applyManualBtc();
+    });
+
+    let refreshTimer = null;
+    function scheduleBtcRefresh() {
+      if (refreshTimer) clearInterval(refreshTimer);
+      refreshTimer = setInterval(() => {
+        if (document.hidden) return;
+        if (btcState.source === "manual") return;
+        loadBtc();
+      }, 5 * 60 * 1000);
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && btcState.source !== "manual") loadBtc({ force: false });
+    });
+
+    initBtcFromStorage();
+    loadReport();
+    loadBtc();
+    scheduleBtcRefresh();
   </script>
 </body>
 </html>
