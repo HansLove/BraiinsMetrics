@@ -16,6 +16,12 @@
       --good: #34d399;
       --warn: #fbbf24;
       --bad: #f87171;
+      --kpi-bg: rgba(22, 29, 42, 0.85);
+      --kpi-good: rgba(52, 211, 153, 0.12);
+      --kpi-warn: rgba(251, 191, 36, 0.12);
+      --kpi-bad: rgba(248, 113, 113, 0.12);
+      --bar-cost: #64748b;
+      --bar-profit: #34d399;
       --radius-lg: 16px;
       --radius: 12px;
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
@@ -33,7 +39,7 @@
       min-height: 100vh;
     }
     .wrap {
-      max-width: 1120px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 1.5rem 1.25rem 3rem;
     }
@@ -44,7 +50,7 @@
     }
     a:hover { text-decoration: underline; }
     .hero {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
     .hero-top {
       display: flex;
@@ -53,7 +59,6 @@
       justify-content: space-between;
       gap: 1rem;
     }
-    .hero-top .nav-tools a + a { margin-left: 0.25rem; }
     .brand-line {
       font-size: 0.75rem;
       font-weight: 700;
@@ -72,7 +77,7 @@
       margin: 0;
       color: var(--muted);
       font-size: 0.9rem;
-      max-width: 40rem;
+      max-width: 42rem;
     }
     .nav-tools {
       display: flex;
@@ -97,10 +102,221 @@
       border-color: rgba(247, 147, 26, 0.45);
       color: #fcd9a6;
     }
-    .section {
-      margin-top: 2rem;
+
+    /* Two-column shell */
+    .layout-2col {
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: start;
     }
-    .section-title {
+    @media (max-width: 900px) {
+      .layout-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .inputs-drawer {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+    .inputs-drawer summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 0.65rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    .inputs-drawer summary::-webkit-details-marker { display: none; }
+    .inputs-drawer summary::after {
+      content: " ▼";
+      font-size: 0.65rem;
+      opacity: 0.7;
+    }
+    .inputs-drawer[open] summary::after { content: " ▲"; }
+    @media (min-width: 901px) {
+      .inputs-drawer summary {
+        display: none;
+      }
+      .inputs-drawer > .inputs-panel {
+        margin-top: 0;
+      }
+    }
+
+    .inputs-panel {
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+      padding: 1.1rem 1.15rem;
+      background: linear-gradient(165deg, var(--bg-elevated) 0%, var(--surface) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+    .input-group-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 1rem 0 0.6rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .input-group-title:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+    }
+    label.field-inline {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field-row input {
+      width: 100%;
+      padding: 0.45rem 0.55rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0d1117;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .field-row input:focus {
+      outline: 2px solid rgba(247, 147, 26, 0.45);
+      outline-offset: 1px;
+    }
+    .field-unit {
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      width: 3.25rem;
+      text-align: right;
+    }
+    .inputs-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Results column */
+    .results-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-width: 0;
+    }
+
+    .rec-banner {
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.15rem 1rem 1.35rem;
+      border: 1px solid var(--border);
+      background: var(--kpi-bg);
+      border-left: 4px solid var(--accent);
+      box-shadow: var(--shadow);
+    }
+    .rec-banner.rec-good { border-left-color: var(--good); background: var(--kpi-good); }
+    .rec-banner.rec-warn { border-left-color: var(--warn); background: var(--kpi-warn); }
+    .rec-banner.rec-bad { border-left-color: var(--bad); background: var(--kpi-bad); }
+    .rec-banner.rec-neutral {
+      border-left-color: var(--muted);
+      background: rgba(139, 155, 184, 0.08);
+    }
+    .rec-banner h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .rec-banner p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+    @media (min-width: 700px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+    .kpi {
+      border-radius: var(--radius);
+      padding: 1rem 1rem 0.9rem;
+      border: 1px solid var(--border);
+      background: var(--kpi-bg);
+    }
+    .kpi.kpi-spotlight {
+      border-color: rgba(247, 147, 26, 0.35);
+      background: linear-gradient(160deg, rgba(247, 147, 26, 0.08), var(--kpi-bg));
+    }
+    .kpi-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    .kpi-value {
+      font-size: clamp(1.35rem, 3vw, 1.85rem);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    .kpi.kpi-profit .kpi-value { color: var(--good); }
+    .kpi.kpi-margin .kpi-value { color: var(--warn); }
+    .kpi-sub {
+      margin-top: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .kpi-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .breakdown-card {
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.2rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .breakdown-card h3 {
       margin: 0 0 0.75rem;
       font-size: 0.7rem;
       font-weight: 700;
@@ -108,81 +324,279 @@
       text-transform: uppercase;
       color: var(--muted);
     }
-    .section-note {
-      margin: 0 0 1rem;
-      font-size: 0.8125rem;
-      color: var(--muted);
-      max-width: 48rem;
-    }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.1rem 1.2rem;
-    }
-    .card-panel {
-      box-shadow: var(--shadow);
-      border-radius: var(--radius-lg);
-      background: linear-gradient(145deg, var(--bg-elevated) 0%, var(--surface) 100%);
-    }
-    .input-grid {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    }
-    label.field {
+    .breakdown-track-wrap {
+      height: 22px;
+      border-radius: 999px;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    label.field input {
-      padding: 0.55rem 0.65rem;
-      border-radius: 8px;
       border: 1px solid var(--border);
       background: #0d1117;
-      color: var(--text);
-      font-size: 0.95rem;
-      font-variant-numeric: tabular-nums;
     }
-    label.field input:focus {
-      outline: 2px solid rgba(247, 147, 26, 0.45);
-      outline-offset: 1px;
+    .breakdown-seg-cost {
+      background: linear-gradient(90deg, #475569, var(--bar-cost));
+      transition: width 0.35s ease;
+      min-width: 0;
     }
-    .metrics-grid {
+    .breakdown-seg-profit {
+      background: linear-gradient(90deg, #059669, var(--bar-profit));
+      transition: width 0.35s ease;
+      min-width: 0;
+    }
+    .breakdown-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .breakdown-legend strong { color: var(--text); }
+    .breakdown-note {
+      margin-top: 0.65rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .unit-strip {
       display: grid;
-      gap: 0.75rem;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.65rem;
     }
-    .metric {
-      background: var(--surface);
-      border: 1px solid var(--border);
+    .unit-card {
+      padding: 0.75rem 0.85rem;
       border-radius: var(--radius);
-      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
     }
-    .metric .label {
-      font-size: 0.68rem;
+    .unit-card .u-label {
+      font-size: 0.62rem;
       font-weight: 700;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 0.35rem;
     }
-    .metric .value {
-      font-size: 1.05rem;
+    .unit-card .u-value {
+      margin-top: 0.25rem;
+      font-size: 1rem;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
-      word-break: break-word;
     }
+
+    .ref-strip-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+    .ref-item {
+      padding: 0.5rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(13, 17, 23, 0.6);
+    }
+    .ref-item span { display: block; color: var(--muted); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .ref-item strong { font-variant-numeric: tabular-nums; font-size: 0.9rem; }
+
+    .section-title {
+      margin: 0 0 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .section-note {
+      margin: 0 0 0.65rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .fixed-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+    @media (max-width: 600px) {
+      .fixed-row { grid-template-columns: 1fr; }
+    }
+
+    .benchmark-card {
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.2rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .benchmark-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(180px, 2fr) auto;
+      gap: 1rem;
+      align-items: center;
+    }
+    @media (max-width: 700px) {
+      .benchmark-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .bench-our {
+      font-size: 0.85rem;
+    }
+    .bench-our strong {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      margin-top: 0.2rem;
+    }
+    .bench-axis {
+      position: relative;
+      height: 48px;
+      padding: 0 0.5rem;
+    }
+    .bench-axis-track {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 10px;
+      border-radius: 999px;
+      background: #0d1117;
+      border: 1px solid var(--border);
+    }
+    .bench-band {
+      position: absolute;
+      left: 50%;
+      width: 10%;
+      margin-left: -5%;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(139, 155, 184, 0.25);
+      border: 1px solid rgba(139, 155, 184, 0.35);
+    }
+    .bench-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--text);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+      z-index: 2;
+    }
+    .bench-axis-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.62rem;
+      color: var(--muted);
+      margin-top: 1.75rem;
+      padding: 0 4%;
+    }
+    .bench-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.85rem;
+    }
+    .chip {
+      font-size: 0.72rem;
+      padding: 0.28rem 0.55rem;
+      border-radius: 6px;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+    }
+
+    .scenario-bars {
+      display: grid;
+      gap: 0.65rem;
+      margin-bottom: 0.85rem;
+    }
+    .scenario-bar-row {
+      display: grid;
+      grid-template-columns: 7rem minmax(0, 1fr);
+      gap: 0.65rem;
+      align-items: center;
+      font-size: 0.78rem;
+    }
+    .scenario-bar-row .sn {
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .scenario-bar-track {
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+      border: 1px solid var(--border);
+      background: #0d1117;
+    }
+    .scenario-bar-track .c {
+      background: var(--bar-cost);
+      min-width: 0;
+      transition: width 0.3s ease;
+    }
+    .scenario-bar-track .p {
+      background: linear-gradient(90deg, #059669, var(--bar-profit));
+      min-width: 0;
+      transition: width 0.3s ease;
+    }
+
+    .scenario-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      background: var(--surface);
+    }
+
+    table.scenarios {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    table.scenarios th,
+    table.scenarios td {
+      text-align: left;
+      padding: 0.6rem 0.65rem;
+      border-bottom: 1px solid var(--border);
+    }
+    table.scenarios th {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    table.scenarios td {
+      font-variant-numeric: tabular-nums;
+    }
+    table.scenarios td.em-profit {
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--good);
+    }
+    table.scenarios td.em-margin {
+      font-weight: 700;
+      color: var(--warn);
+    }
+
     .tag {
       display: inline-block;
-      padding: 0.25rem 0.55rem;
+      padding: 0.22rem 0.5rem;
       border-radius: 6px;
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -191,53 +605,7 @@
     .tag.warn { background: rgba(251, 191, 36, 0.18); color: var(--warn); }
     .tag.bad { background: rgba(248, 113, 113, 0.18); color: var(--bad); }
     .tag.neutral { background: #30363d; color: var(--muted); }
-    .flex-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.75rem;
-      justify-content: space-between;
-    }
-    .braiins-row {
-      display: grid;
-      gap: 0.75rem;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      margin-top: 1rem;
-    }
-    table.scenarios {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
-    table.scenarios th,
-    table.scenarios td {
-      text-align: left;
-      padding: 0.65rem 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-    table.scenarios th {
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 0.68rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    table.scenarios td {
-      font-variant-numeric: tabular-nums;
-    }
-    .rec-panel {
-      padding: 1.25rem 1.35rem;
-      border-left: 3px solid var(--accent);
-    }
-    .rec-panel h3 {
-      margin: 0 0 0.5rem;
-      font-size: 1rem;
-    }
-    .rec-panel p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
+
     .toast {
       position: fixed;
       bottom: 1.25rem;
@@ -255,7 +623,7 @@
     }
     .toast.show { opacity: 1; }
     footer {
-      margin-top: 2.5rem;
+      margin-top: 2rem;
       padding-top: 1.25rem;
       border-top: 1px solid var(--border);
       font-size: 0.8125rem;
@@ -278,84 +646,184 @@
         </div>
         <div class="nav-tools">
           <a href="index.html">← Braiins dashboard</a>
-          <button type="button" class="btn" id="btn-reset">Reset to defaults</button>
-          <button type="button" class="btn btn-primary" id="btn-copy">Copy summary</button>
         </div>
       </div>
     </header>
 
-    <section class="section">
-      <h2 class="section-title">Beta capacity</h2>
-      <p class="section-note">Adjust fleet assumptions and rental window. BTC price is a placeholder reference only.</p>
-      <div class="card card-panel">
-        <div class="input-grid">
-          <label class="field">Total available TH/s <input type="number" id="in-total-th" step="any" min="0" /></label>
-          <label class="field">Avg TH/s per machine <input type="number" id="in-avg-machine-th" step="any" min="0.0001" /></label>
-          <label class="field">Cost per machine / hour (USD) <input type="number" id="in-cost-machine" step="any" min="0" /></label>
-          <label class="field">Sale price / TH/s / hour (USD) <input type="number" id="in-sale-th" step="any" min="0" /></label>
-          <label class="field">Rental duration (hours) <input type="number" id="in-duration" step="1" min="0" /></label>
-          <label class="field">Utilization (%) <input type="number" id="in-util" step="any" min="0" max="100" /></label>
-          <label class="field">Payment processing fee (%) <input type="number" id="in-fee" step="any" min="0" max="100" /></label>
-          <label class="field">Discount (%) <input type="number" id="in-discount" step="any" min="0" max="100" /></label>
-          <label class="field">BTC price (USD, placeholder) <input type="number" id="in-btc" step="any" min="0" /></label>
+    <div class="layout-2col">
+      <details class="inputs-drawer" open>
+        <summary>Inputs &amp; assumptions</summary>
+        <aside class="inputs-panel">
+          <div class="input-group-title">Capacity</div>
+          <div class="field-row">
+            <label class="field-inline">Total TH/s <input type="number" id="in-total-th" step="any" min="0" /></label>
+            <span class="field-unit">TH/s</span>
+          </div>
+          <div class="field-row">
+            <label class="field-inline">Avg TH/s per machine <input type="number" id="in-avg-machine-th" step="any" min="0.0001" /></label>
+            <span class="field-unit">TH/s</span>
+          </div>
+
+          <div class="input-group-title">Pricing</div>
+          <div class="field-row">
+            <label class="field-inline">Cost / machine / hour <input type="number" id="in-cost-machine" step="any" min="0" /></label>
+            <span class="field-unit">USD</span>
+          </div>
+          <div class="field-row">
+            <label class="field-inline">Sale / TH/s / hour <input type="number" id="in-sale-th" step="any" min="0" /></label>
+            <span class="field-unit">$/TH/h</span>
+          </div>
+
+          <div class="input-group-title">Period</div>
+          <div class="field-row">
+            <label class="field-inline">Rental duration <input type="number" id="in-duration" step="1" min="0" /></label>
+            <span class="field-unit">hours</span>
+          </div>
+          <div class="field-row">
+            <label class="field-inline">Utilization <input type="number" id="in-util" step="any" min="0" max="100" /></label>
+            <span class="field-unit">%</span>
+          </div>
+
+          <div class="input-group-title">Adjustments</div>
+          <div class="field-row">
+            <label class="field-inline">Payment fee <input type="number" id="in-fee" step="any" min="0" max="100" /></label>
+            <span class="field-unit">%</span>
+          </div>
+          <div class="field-row">
+            <label class="field-inline">Discount <input type="number" id="in-discount" step="any" min="0" max="100" /></label>
+            <span class="field-unit">%</span>
+          </div>
+          <div class="field-row">
+            <label class="field-inline">BTC price (placeholder) <input type="number" id="in-btc" step="any" min="0" /></label>
+            <span class="field-unit">USD</span>
+          </div>
+
+          <div class="input-group-title">Braiins benchmark</div>
+          <div class="field-row">
+            <label class="field-inline">USD / PH / day <input type="number" id="in-braiins-phday" step="any" min="0" /></label>
+            <span class="field-unit">USD</span>
+          </div>
+
+          <div class="inputs-actions">
+            <button type="button" class="btn" id="btn-reset">Reset to defaults</button>
+            <button type="button" class="btn btn-primary" id="btn-copy">Copy summary</button>
+          </div>
+        </aside>
+      </details>
+
+      <main class="results-main">
+        <div id="rec-banner" class="rec-banner" role="region" aria-label="Pricing recommendation"></div>
+
+        <div class="kpi-grid">
+          <div class="kpi kpi-profit kpi-spotlight" id="kpi-profit">
+            <div class="kpi-label">Gross profit</div>
+            <div class="kpi-value" id="kpi-profit-value">—</div>
+            <div class="kpi-sub" id="kpi-profit-sub"></div>
+          </div>
+          <div class="kpi kpi-margin" id="kpi-margin">
+            <div class="kpi-head">
+              <div class="kpi-label">Gross margin</div>
+              <span id="kpi-margin-pill"></span>
+            </div>
+            <div class="kpi-value" id="kpi-margin-value">—</div>
+            <div class="kpi-sub" id="kpi-margin-sub"></div>
+          </div>
+          <div class="kpi" id="kpi-revenue">
+            <div class="kpi-label">Net revenue</div>
+            <div class="kpi-value" id="kpi-revenue-value">—</div>
+            <div class="kpi-sub" id="kpi-revenue-sub"></div>
+          </div>
+          <div class="kpi" id="kpi-cost">
+            <div class="kpi-label">Internal cost</div>
+            <div class="kpi-value" id="kpi-cost-value">—</div>
+            <div class="kpi-sub" id="kpi-cost-sub"></div>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <section class="section">
-      <h2 class="section-title">Braiins benchmark</h2>
-      <p class="section-note">Compare our listed $/TH/hour to Braiins-style USD per PH per day from the open market.</p>
-      <div class="card card-panel">
-        <div class="input-grid" style="max-width: 320px;">
-          <label class="field">Braiins USD / PH / day <input type="number" id="in-braiins-phday" step="any" min="0" /></label>
+        <div class="breakdown-card">
+          <h3>Net revenue → profit</h3>
+          <div class="breakdown-track-wrap" id="breakdown-track" aria-hidden="true">
+            <div class="breakdown-seg-cost" id="breakdown-cost" style="width:0%"></div>
+            <div class="breakdown-seg-profit" id="breakdown-profit" style="width:0%"></div>
+          </div>
+          <div class="breakdown-legend" id="breakdown-legend"></div>
+          <div class="breakdown-note" id="breakdown-note"></div>
         </div>
-        <div class="braiins-row" id="braiins-derived"></div>
-        <div class="flex-row" style="margin-top: 1rem;">
-          <span class="section-note" style="margin:0;">Our price vs benchmark</span>
-          <span id="braiins-vs-tag"></span>
+
+        <div>
+          <div class="section-title">Sale price (reference units)</div>
+          <div class="unit-strip">
+            <div class="unit-card">
+              <div class="u-label">Sale / PH / day</div>
+              <div class="u-value" id="unit-phd">—</div>
+            </div>
+            <div class="unit-card">
+              <div class="u-label">Sale / 100 TH / hour</div>
+              <div class="u-value" id="unit-100th">—</div>
+            </div>
+            <div class="unit-card">
+              <div class="u-label">Sale / machine / hour</div>
+              <div class="u-value" id="unit-machine">—</div>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
 
-    <section class="section">
-      <h2 class="section-title">Core metrics</h2>
-      <div class="metrics-grid" id="core-metrics"></div>
-      <div class="flex-row" style="margin-top: 0.75rem;">
-        <span class="section-note" style="margin:0;">Margin health (on net revenue)</span>
-        <span id="margin-status-tag"></span>
-      </div>
-    </section>
+        <div>
+          <div class="ref-strip-title">Reference metrics</div>
+          <div class="ref-grid" id="ref-grid"></div>
+        </div>
 
-    <section class="section">
-      <h2 class="section-title">Net revenue — fixed 24h windows</h2>
-      <p class="section-note">Same fee and discount rules; utilization only changes sold TH/s. Figures are net of fees and discounts.</p>
-      <div class="metrics-grid" id="fixed-revenue"></div>
-    </section>
+        <div>
+          <div class="section-title">Net revenue — 24h capacity snapshots</div>
+          <p class="section-note">Same fees &amp; discounts; only utilization changes. Values are net of fees and discounts.</p>
+          <div class="fixed-row" id="fixed-revenue"></div>
+        </div>
 
-    <section class="section">
-      <h2 class="section-title">Pricing recommendation</h2>
-      <div class="card rec-panel" id="recommendation"></div>
-    </section>
+        <div class="benchmark-card">
+          <div class="section-title" style="margin-bottom:0.75rem;">Braiins benchmark</div>
+          <div class="benchmark-row">
+            <div class="bench-our">
+              Our $/TH/hour
+              <strong id="bench-our-price">—</strong>
+            </div>
+            <div class="bench-axis">
+              <div class="bench-axis-track"></div>
+              <div class="bench-band" aria-hidden="true"></div>
+              <div class="bench-marker" id="bench-marker" style="left:50%"></div>
+              <div class="bench-axis-labels">
+                <span>Below benchmark</span>
+                <span>Braiins ref</span>
+                <span>Premium</span>
+              </div>
+            </div>
+            <div id="braiins-vs-tag"></div>
+          </div>
+          <div class="bench-chips" id="braiins-chips"></div>
+        </div>
 
-    <section class="section">
-      <h2 class="section-title">Capacity scenarios (24h)</h2>
-      <div class="card card-panel" style="overflow-x: auto;">
-        <table class="scenarios" id="scenario-table">
-          <thead>
-            <tr>
-              <th>Scenario</th>
-              <th>Utilization</th>
-              <th>Net revenue</th>
-              <th>Internal cost</th>
-              <th>Gross profit</th>
-              <th>Margin</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="scenario-body"></tbody>
-        </table>
-      </div>
-    </section>
+        <div>
+          <div class="section-title">Capacity scenarios (24h)</div>
+          <p class="section-note">Cost vs profit split scaled to the largest net revenue in the set.</p>
+          <div class="scenario-bars" id="scenario-bars"></div>
+          <div class="scenario-table-wrap">
+            <table class="scenarios" id="scenario-table">
+              <thead>
+                <tr>
+                  <th>Scenario</th>
+                  <th>Utilization</th>
+                  <th>Net revenue</th>
+                  <th>Internal cost</th>
+                  <th>Gross profit</th>
+                  <th>Margin</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="scenario-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
 
     <footer>
       RentHashRate / Caos Enterprise — internal calculator. Refresh inputs after changing beta fleet or sale price.
@@ -546,117 +1014,30 @@
       return { ...base, period };
     }
 
-    function renderMetric(label, valueHtml) {
-      const d = document.createElement("div");
-      d.className = "metric";
-      d.innerHTML = `<div class="label">${label}</div><div class="value">${valueHtml}</div>`;
-      return d;
+    function renderTag(className, text) {
+      const el = document.createElement("span");
+      el.className = "tag " + className;
+      el.textContent = text;
+      return el;
     }
 
-    function renderTag(className, text) {
-      const s = document.createElement("span");
-      s.className = "tag " + className;
-      s.textContent = text;
-      return s;
+    function clamp(n, lo, hi) {
+      return Math.min(hi, Math.max(lo, n));
     }
 
     function recalc() {
       const s = readState();
       const p = s.period;
 
-      // --- Braiins derived row
-      const bd = $("braiins-derived");
-      bd.innerHTML = "";
-      bd.appendChild(
-        renderMetric("Braiins $/PH/hour", fmtUsd(s.braiinsPerPHHour, 4))
-      );
-      bd.appendChild(renderMetric("Braiins $/TH/day", fmtUsd(s.braiinsPerTHDay, 4)));
-      bd.appendChild(renderMetric("Braiins $/TH/hour", fmtUsd(s.braiinsPerTHHour, 6)));
-      bd.appendChild(renderMetric("Braiins $/100TH/hour", fmtUsd(s.braiinsPer100THHour, 4)));
-
-      const bCmp = braiinsComparison(s.diffVsBraiinsPct);
-      const vsEl = $("braiins-vs-tag");
-      vsEl.innerHTML = "";
-      vsEl.appendChild(renderTag(bCmp.cls, bCmp.label + " (" + fmtPct(s.diffVsBraiinsPct) + " vs benchmark)"));
-
-      // --- Core metrics
-      const core = $("core-metrics");
-      core.innerHTML = "";
-
-      core.appendChild(renderMetric("Estimated machines (fleet)", fmtNum(s.machines, 3)));
-      core.appendChild(renderMetric("Internal cost / TH / hour", fmtUsd(s.costPerTHHour, 6)));
-      core.appendChild(renderMetric("Internal cost / PH / day", fmtUsd(s.costPerPHDay, 2)));
-      core.appendChild(renderMetric("Sale price / PH / day", fmtUsd(s.salePricePerPHDay, 2)));
-      core.appendChild(renderMetric("Sale price / 100 TH / hour", fmtUsd(s.salePricePer100THHour, 4)));
-      core.appendChild(renderMetric("Sale price / machine / hour", fmtUsd(s.salePricePerMachineHour, 4)));
-
-      if (p) {
-        core.appendChild(renderMetric("Total net revenue (period)", fmtUsd(p.revenueNet, 2)));
-        core.appendChild(renderMetric("Total internal cost (period)", fmtUsd(p.internalCost, 2)));
-        core.appendChild(renderMetric("Gross profit", fmtUsd(p.grossProfit, 2)));
-        core.appendChild(renderMetric("Gross margin", fmtPct(p.grossMarginPct)));
-        core.appendChild(
-          renderMetric(
-            "Markup over cost",
-            p.markupPct === null ? "—" : fmtPct(p.markupPct)
-          )
-        );
-      } else {
-        core.appendChild(renderMetric("Total net revenue (period)", "—"));
-        core.appendChild(renderMetric("Total internal cost (period)", "—"));
-        core.appendChild(renderMetric("Gross profit", "—"));
-        core.appendChild(renderMetric("Gross margin", "—"));
-        core.appendChild(renderMetric("Markup over cost", "—"));
-      }
-
-      core.appendChild(
-        renderMetric("Δ vs Braiins benchmark", fmtPct(s.diffVsBraiinsPct))
-      );
-      core.appendChild(
-        renderMetric("BTC ref (placeholder)", s.btcPrice > 0 ? fmtUsd(s.btcPrice, 0) : "—")
-      );
-
-      const marginTag = $("margin-status-tag");
-      marginTag.innerHTML = "";
-      if (p && Number.isFinite(p.grossMarginPct)) {
-        const mc = marginTagClass(p.grossMarginPct);
-        marginTag.appendChild(
-          renderTag(mc, marginTagLabel(p.grossMarginPct) + " · " + fmtPct(p.grossMarginPct))
-        );
-      } else {
-        marginTag.appendChild(renderTag("neutral", "—"));
-      }
-
-      // --- Fixed 24h revenue at 100%, 50%, 25%
-      const fixedHost = $("fixed-revenue");
-      fixedHost.innerHTML = "";
-      const levels = [
-        { label: "100% capacity · 24h", u: 1 },
-        { label: "50% capacity · 24h", u: 0.5 },
-        { label: "25% capacity · 24h", u: 0.25 },
-      ];
-      for (const row of levels) {
-        const pr = computePeriod({
-          totalTH: s.totalTH,
-          avgMachineTH: s.avgMachineTH,
-          costPerMachineHour: s.costPerMachineHour,
-          salePricePerTHHour: s.salePricePerTHHour,
-          durationHours: 24,
-          utilizationDecimal: row.u,
-          discountPct: s.discountPct,
-          feePct: s.feePct,
-        });
-        const val = pr ? fmtUsd(pr.revenueNet, 2) : "—";
-        fixedHost.appendChild(renderMetric(row.label + " net revenue", val));
-      }
-
-      // --- Recommendation
-      const rec = $("recommendation");
+      // --- Recommendation banner (first in results column)
+      const recEl = $("rec-banner");
       let recTitle = "Adjust inputs";
       let recBody =
         "Enter valid fleet and pricing assumptions. For hashpower rental, margin must cover operating spread versus the market benchmark.";
+      let recStripe = "neutral";
       if (p && Number.isFinite(p.grossMarginPct)) {
         const g = p.grossMarginPct;
+        recStripe = marginTagClass(g);
         if (g < 0.3) {
           recTitle = "Pricing is too low for beta.";
           recBody =
@@ -671,18 +1052,150 @@
             "Strong gross margin on net revenue—ensure demand and payment fees stay predictable as you scale hashpower rental.";
         }
       }
-      rec.innerHTML = `<h3>${recTitle}</h3><p>${recBody}</p>`;
+      recEl.className = "rec-banner rec-" + recStripe;
+      recEl.innerHTML = `<h2>${recTitle}</h2><p>${recBody}</p>`;
 
-      // --- Scenario table
-      const tbody = $("scenario-body");
-      tbody.innerHTML = "";
+      // --- KPI scorecard
+      if (p) {
+        $("kpi-profit-value").textContent = fmtUsd(p.grossProfit, 2);
+        $("kpi-profit-sub").textContent = `For ${s.durationHours} h at ${typeof s.utilizationPct === "number" && Number.isFinite(s.utilizationPct) ? s.utilizationPct + "%" : fmtPct(s.utilizationDecimal)} utilization`;
+
+        $("kpi-margin-value").textContent = fmtPct(p.grossMarginPct);
+        $("kpi-margin-sub").textContent =
+          p.markupPct === null ? "—" : `Markup ${fmtPct(p.markupPct)} over internal cost`;
+        const pill = $("kpi-margin-pill");
+        pill.innerHTML = "";
+        pill.appendChild(
+          renderTag(marginTagClass(p.grossMarginPct), marginTagLabel(p.grossMarginPct))
+        );
+
+        $("kpi-revenue-value").textContent = fmtUsd(p.revenueNet, 2);
+        $("kpi-revenue-sub").textContent = `Gross ${fmtUsd(p.revenueGross, 2)} − discount ${fmtUsd(p.discountAmount, 2)} − fees ${fmtUsd(p.paymentFee, 2)}`;
+
+        $("kpi-cost-value").textContent = fmtUsd(p.internalCost, 2);
+        $("kpi-cost-sub").textContent =
+          `${fmtNum(p.machinesUsed, 4)} machines × ${fmtUsd(s.costPerMachineHour, 2)}/h × ${s.durationHours} h`;
+      } else {
+        $("kpi-profit-value").textContent = "—";
+        $("kpi-profit-sub").textContent = "";
+        $("kpi-margin-value").textContent = "—";
+        $("kpi-margin-sub").textContent = "";
+        $("kpi-margin-pill").innerHTML = "";
+        $("kpi-revenue-value").textContent = "—";
+        $("kpi-revenue-sub").textContent = "";
+        $("kpi-cost-value").textContent = "—";
+        $("kpi-cost-sub").textContent = "";
+      }
+
+      // --- Breakdown bar: cost + profit = net revenue
+      const bc = $("breakdown-cost");
+      const bp = $("breakdown-profit");
+      const leg = $("breakdown-legend");
+      const note = $("breakdown-note");
+      if (p && p.revenueNet > 0) {
+        const cw = (p.internalCost / p.revenueNet) * 100;
+        const pw = (p.grossProfit / p.revenueNet) * 100;
+        bc.style.width = cw + "%";
+        bp.style.width = pw + "%";
+        leg.innerHTML = `
+          <span><span style="color:var(--bar-cost)">■</span> Internal cost <strong>${fmtUsd(p.internalCost, 2)}</strong> (${fmtPct(p.internalCost / p.revenueNet)})</span>
+          <span><span style="color:var(--bar-profit)">■</span> Gross profit <strong>${fmtUsd(p.grossProfit, 2)}</strong> (${fmtPct(p.grossProfit / p.revenueNet)})</span>
+          <span>Net revenue <strong>${fmtUsd(p.revenueNet, 2)}</strong></span>
+        `;
+        note.textContent =
+          p.revenueGross > 0
+            ? `Before deductions: gross billings ${fmtUsd(p.revenueGross, 2)} · Discount ${fmtUsd(p.discountAmount, 2)} · Payment fees ${fmtUsd(p.paymentFee, 2)}`
+            : "";
+      } else {
+        bc.style.width = "0%";
+        bp.style.width = "0%";
+        leg.innerHTML =
+          p && p.revenueNet <= 0
+            ? "<span>Net revenue is zero or negative — check utilization, price, and duration.</span>"
+            : "";
+        note.textContent = "";
+      }
+
+      // --- Unit strip
+      $("unit-phd").textContent = fmtUsd(s.salePricePerPHDay, 2);
+      $("unit-100th").textContent = fmtUsd(s.salePricePer100THHour, 4);
+      $("unit-machine").textContent = fmtUsd(s.salePricePerMachineHour, 4);
+
+      // --- Reference metrics grid
+      const rg = $("ref-grid");
+      rg.innerHTML = "";
+      function refItem(label, val) {
+        const d = document.createElement("div");
+        d.className = "ref-item";
+        d.innerHTML = `<span>${label}</span><strong>${val}</strong>`;
+        return d;
+      }
+      rg.appendChild(refItem("Est. machines (fleet)", fmtNum(s.machines, 3)));
+      rg.appendChild(refItem("Internal cost / TH / hour", fmtUsd(s.costPerTHHour, 6)));
+      rg.appendChild(refItem("Internal cost / PH / day", fmtUsd(s.costPerPHDay, 2)));
+      rg.appendChild(refItem("Δ vs Braiins benchmark", fmtPct(s.diffVsBraiinsPct)));
+      rg.appendChild(refItem("BTC ref (placeholder)", s.btcPrice > 0 ? fmtUsd(s.btcPrice, 0) : "—"));
+
+      // --- Fixed 24h revenue
+      const fixedHost = $("fixed-revenue");
+      fixedHost.innerHTML = "";
+      const levels = [
+        { label: "100% · 24h net", u: 1 },
+        { label: "50% · 24h net", u: 0.5 },
+        { label: "25% · 24h net", u: 0.25 },
+      ];
+      for (const row of levels) {
+        const pr = computePeriod({
+          totalTH: s.totalTH,
+          avgMachineTH: s.avgMachineTH,
+          costPerMachineHour: s.costPerMachineHour,
+          salePricePerTHHour: s.salePricePerTHHour,
+          durationHours: 24,
+          utilizationDecimal: row.u,
+          discountPct: s.discountPct,
+          feePct: s.feePct,
+        });
+        const card = document.createElement("div");
+        card.className = "unit-card";
+        card.innerHTML = `<div class="u-label">${row.label}</div><div class="u-value">${pr ? fmtUsd(pr.revenueNet, 2) : "—"}</div>`;
+        fixedHost.appendChild(card);
+      }
+
+      // --- Braiins visual
+      $("bench-our-price").textContent = fmtUsd(s.salePricePerTHHour, 6) + "/TH/h";
+      const diff = s.diffVsBraiinsPct;
+      const markerLeftPct = 50 + clamp(diff * 100, -40, 40);
+      $("bench-marker").style.left = markerLeftPct + "%";
+
+      const vsWrap = $("braiins-vs-tag");
+      vsWrap.innerHTML = "";
+      const bCmp = braiinsComparison(s.diffVsBraiinsPct);
+      vsWrap.appendChild(
+        renderTag(bCmp.cls, bCmp.label + " · " + fmtPct(s.diffVsBraiinsPct))
+      );
+
+      const chips = $("braiins-chips");
+      chips.innerHTML = "";
+      function addChip(txt) {
+        const c = document.createElement("span");
+        c.className = "chip";
+        c.textContent = txt;
+        chips.appendChild(c);
+      }
+      addChip("Braiins $/PH/h · " + fmtUsd(s.braiinsPerPHHour, 4));
+      addChip("Braiins $/TH/day · " + fmtUsd(s.braiinsPerTHDay, 4));
+      addChip("Braiins $/TH/h · " + fmtUsd(s.braiinsPerTHHour, 6));
+      addChip("Braiins $/100TH/h · " + fmtUsd(s.braiinsPer100THHour, 4));
+
+      // --- Scenario bars + table
       const scenarios = [
         { name: "Conservative", u: 0.25 },
         { name: "Base", u: 0.5 },
         { name: "Aggressive", u: 1 },
       ];
-      for (const sc of scenarios) {
-        const pr = computePeriod({
+      const scenarioResults = scenarios.map((sc) => ({
+        ...sc,
+        pr: computePeriod({
           totalTH: s.totalTH,
           avgMachineTH: s.avgMachineTH,
           costPerMachineHour: s.costPerMachineHour,
@@ -691,7 +1204,40 @@
           utilizationDecimal: sc.u,
           discountPct: s.discountPct,
           feePct: s.feePct,
-        });
+        }),
+      }));
+      const maxRev = Math.max(
+        0,
+        ...scenarioResults.map((x) => (x.pr ? x.pr.revenueNet : 0))
+      );
+
+      const sb = $("scenario-bars");
+      sb.innerHTML = "";
+      for (const { name, u, pr } of scenarioResults) {
+        const row = document.createElement("div");
+        row.className = "scenario-bar-row";
+        if (!pr || maxRev <= 0) {
+          row.innerHTML = `<span class="sn">${name}</span><div class="scenario-bar-track"></div>`;
+          sb.appendChild(row);
+          continue;
+        }
+        const scale = (pr.revenueNet / maxRev) * 100;
+        const innerCostPct = pr.revenueNet > 0 ? (pr.internalCost / pr.revenueNet) * scale : 0;
+        const innerProfitPct = pr.revenueNet > 0 ? (pr.grossProfit / pr.revenueNet) * scale : 0;
+        row.innerHTML = `
+          <span class="sn">${name} (${fmtPct(u)})</span>
+          <div class="scenario-bar-track" title="Net revenue ${fmtUsd(pr.revenueNet, 2)}">
+            <span class="c" style="width:${innerCostPct}%"></span>
+            <span class="p" style="width:${innerProfitPct}%"></span>
+          </div>
+        `;
+        sb.appendChild(row);
+      }
+
+      const tbody = $("scenario-body");
+      tbody.innerHTML = "";
+      for (const sc of scenarioResults) {
+        const pr = sc.pr;
         const tr = document.createElement("tr");
         if (!pr) {
           tr.innerHTML = `<td>${sc.name}</td><td>${fmtPct(sc.u)}</td><td colspan="5">—</td>`;
@@ -706,8 +1252,8 @@
           <td>${fmtPct(sc.u)}</td>
           <td>${fmtUsd(pr.revenueNet, 2)}</td>
           <td>${fmtUsd(pr.internalCost, 2)}</td>
-          <td>${fmtUsd(pr.grossProfit, 2)}</td>
-          <td>${fmtPct(mg)}</td>
+          <td class="em-profit">${fmtUsd(pr.grossProfit, 2)}</td>
+          <td class="em-margin">${fmtPct(mg)}</td>
           <td><span class="tag ${mClass}">${mLbl}</span></td>
         `;
         tbody.appendChild(tr);
