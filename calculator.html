@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RentHashRate · Margin &amp; Cost Calculator</title>
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --bg-elevated: #121826;
+      --surface: #161d2a;
+      --border: #2a3548;
+      --text: #f0f4fa;
+      --muted: #8b9bb8;
+      --accent: #f7931a;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #f87171;
+      --radius-lg: 16px;
+      --radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(247, 147, 26, 0.08), transparent),
+        radial-gradient(ellipse 80% 50% at 0% 60%, rgba(52, 211, 153, 0.05), transparent);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a:hover { text-decoration: underline; }
+    .hero {
+      margin-bottom: 1.5rem;
+    }
+    .hero-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .hero-top .nav-tools a + a { margin-left: 0.25rem; }
+    .brand-line {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+    .hero h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.4rem, 3.5vw, 1.75rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .hero-sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      max-width: 40rem;
+    }
+    .nav-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover { border-color: #3d4d63; background: var(--bg-elevated); }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(247, 147, 26, 0.25), rgba(247, 147, 26, 0.08));
+      border-color: rgba(247, 147, 26, 0.45);
+      color: #fcd9a6;
+    }
+    .section {
+      margin-top: 2rem;
+    }
+    .section-title {
+      margin: 0 0 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .section-note {
+      margin: 0 0 1rem;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      max-width: 48rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.2rem;
+    }
+    .card-panel {
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, var(--bg-elevated) 0%, var(--surface) 100%);
+    }
+    .input-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+    label.field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    label.field input {
+      padding: 0.55rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0d1117;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-variant-numeric: tabular-nums;
+    }
+    label.field input:focus {
+      outline: 2px solid rgba(247, 147, 26, 0.45);
+      outline-offset: 1px;
+    }
+    .metrics-grid {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 1rem;
+    }
+    .metric .label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    .metric .value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      word-break: break-word;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .tag.good { background: rgba(52, 211, 153, 0.18); color: var(--good); }
+    .tag.warn { background: rgba(251, 191, 36, 0.18); color: var(--warn); }
+    .tag.bad { background: rgba(248, 113, 113, 0.18); color: var(--bad); }
+    .tag.neutral { background: #30363d; color: var(--muted); }
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      justify-content: space-between;
+    }
+    .braiins-row {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      margin-top: 1rem;
+    }
+    table.scenarios {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    table.scenarios th,
+    table.scenarios td {
+      text-align: left;
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    table.scenarios th {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    table.scenarios td {
+      font-variant-numeric: tabular-nums;
+    }
+    .rec-panel {
+      padding: 1.25rem 1.35rem;
+      border-left: 3px solid var(--accent);
+    }
+    .rec-panel h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+    .rec-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .toast {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      padding: 0.65rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 50;
+    }
+    .toast.show { opacity: 1; }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.8125rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="brand-line">RentHashRate / Caos Enterprise</div>
+          <h1>Margin &amp; Cost Calculator</h1>
+          <p class="hero-sub">
+            Internal model for <strong>hashpower rental</strong> economics versus the Braiins
+            <strong>market benchmark</strong>. Useful for sizing beta capacity—not a substitute for
+            <strong>solo mining</strong> variance math or <strong>block probability</strong> outcomes.
+          </p>
+        </div>
+        <div class="nav-tools">
+          <a href="index.html">← Braiins dashboard</a>
+          <button type="button" class="btn" id="btn-reset">Reset to defaults</button>
+          <button type="button" class="btn btn-primary" id="btn-copy">Copy summary</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2 class="section-title">Beta capacity</h2>
+      <p class="section-note">Adjust fleet assumptions and rental window. BTC price is a placeholder reference only.</p>
+      <div class="card card-panel">
+        <div class="input-grid">
+          <label class="field">Total available TH/s <input type="number" id="in-total-th" step="any" min="0" /></label>
+          <label class="field">Avg TH/s per machine <input type="number" id="in-avg-machine-th" step="any" min="0.0001" /></label>
+          <label class="field">Cost per machine / hour (USD) <input type="number" id="in-cost-machine" step="any" min="0" /></label>
+          <label class="field">Sale price / TH/s / hour (USD) <input type="number" id="in-sale-th" step="any" min="0" /></label>
+          <label class="field">Rental duration (hours) <input type="number" id="in-duration" step="1" min="0" /></label>
+          <label class="field">Utilization (%) <input type="number" id="in-util" step="any" min="0" max="100" /></label>
+          <label class="field">Payment processing fee (%) <input type="number" id="in-fee" step="any" min="0" max="100" /></label>
+          <label class="field">Discount (%) <input type="number" id="in-discount" step="any" min="0" max="100" /></label>
+          <label class="field">BTC price (USD, placeholder) <input type="number" id="in-btc" step="any" min="0" /></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Braiins benchmark</h2>
+      <p class="section-note">Compare our listed $/TH/hour to Braiins-style USD per PH per day from the open market.</p>
+      <div class="card card-panel">
+        <div class="input-grid" style="max-width: 320px;">
+          <label class="field">Braiins USD / PH / day <input type="number" id="in-braiins-phday" step="any" min="0" /></label>
+        </div>
+        <div class="braiins-row" id="braiins-derived"></div>
+        <div class="flex-row" style="margin-top: 1rem;">
+          <span class="section-note" style="margin:0;">Our price vs benchmark</span>
+          <span id="braiins-vs-tag"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Core metrics</h2>
+      <div class="metrics-grid" id="core-metrics"></div>
+      <div class="flex-row" style="margin-top: 0.75rem;">
+        <span class="section-note" style="margin:0;">Margin health (on net revenue)</span>
+        <span id="margin-status-tag"></span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Net revenue — fixed 24h windows</h2>
+      <p class="section-note">Same fee and discount rules; utilization only changes sold TH/s. Figures are net of fees and discounts.</p>
+      <div class="metrics-grid" id="fixed-revenue"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Pricing recommendation</h2>
+      <div class="card rec-panel" id="recommendation"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Capacity scenarios (24h)</h2>
+      <div class="card card-panel" style="overflow-x: auto;">
+        <table class="scenarios" id="scenario-table">
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Utilization</th>
+              <th>Net revenue</th>
+              <th>Internal cost</th>
+              <th>Gross profit</th>
+              <th>Margin</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="scenario-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      RentHashRate / Caos Enterprise — internal calculator. Refresh inputs after changing beta fleet or sale price.
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /**
+     * RentHashRate margin calculator — all rates stored as decimals internally where noted.
+     * User-facing percentages (utilization, fee, discount) are 0–100 in the UI.
+     */
+
+    const DEFAULTS = {
+      totalTH: 225.927,
+      avgMachineTH: 100,
+      costPerMachineHour: 0.25,
+      salePricePerTHHour: 0.005,
+      braiinsPHDay: 38,
+      btcPrice: 70000,
+      durationHours: 24,
+      utilizationPct: 100,
+      feePct: 0,
+      discountPct: 0,
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    /** Format USD for display */
+    function fmtUsd(n, digits = 2) {
+      if (n === null || n === undefined || Number.isNaN(n)) return "—";
+      return (
+        "$" +
+        Number(n).toLocaleString(undefined, {
+          maximumFractionDigits: digits,
+          minimumFractionDigits: Number(n) % 1 === 0 ? 0 : Math.min(2, digits),
+        })
+      );
+    }
+
+    /** Format percentage for display (input is decimal e.g. 0.42 → 42%) */
+    function fmtPct(decimal, digits = 1) {
+      if (decimal === null || decimal === undefined || Number.isNaN(decimal)) return "—";
+      return (decimal * 100).toLocaleString(undefined, {
+        maximumFractionDigits: digits,
+        minimumFractionDigits: 0,
+      }) + "%";
+    }
+
+    /**
+     * Map gross margin decimal to green / yellow / red tag per spec:
+     * Green: > 80%, Yellow: 30–80%, Red: < 30%
+     */
+    function marginTagClass(marginDecimal) {
+      if (marginDecimal > 0.8) return "good";
+      if (marginDecimal >= 0.3) return "warn";
+      return "bad";
+    }
+
+    function marginTagLabel(marginDecimal) {
+      if (marginDecimal > 0.8) return "Strong margin";
+      if (marginDecimal >= 0.3) return "Moderate margin";
+      return "Thin margin";
+    }
+
+    /**
+     * Braiins comparison from relative difference in $/TH/hour:
+     * below < -5%, near ±5%, premium > +5%
+     */
+    function braiinsComparison(diffPct) {
+      if (diffPct < -0.05) return { label: "below Braiins", cls: "warn" };
+      if (diffPct <= 0.05) return { label: "near Braiins", cls: "neutral" };
+      return { label: "premium over Braiins", cls: "good" };
+    }
+
+    /**
+     * Single-period economics for a given utilization (0–1) and duration (hours).
+     * Applies global discountPct and feePct (0–1) from inputs.
+     */
+    function computePeriod(state) {
+      const {
+        totalTH,
+        avgMachineTH,
+        costPerMachineHour,
+        salePricePerTHHour,
+        durationHours,
+        utilizationDecimal,
+        discountPct,
+        feePct,
+      } = state;
+
+      if (avgMachineTH <= 0 || durationHours < 0) {
+        return null;
+      }
+
+      const usableTH = totalTH * utilizationDecimal;
+      const machinesUsed = usableTH / avgMachineTH;
+      const internalCost = machinesUsed * costPerMachineHour * durationHours;
+      const revenueGross = usableTH * durationHours * salePricePerTHHour;
+      const discountAmount = revenueGross * discountPct;
+      const paymentFee = (revenueGross - discountAmount) * feePct;
+      const revenueNet = revenueGross - discountAmount - paymentFee;
+      const grossProfit = revenueNet - internalCost;
+      const grossMarginPct = revenueNet > 0 ? grossProfit / revenueNet : 0;
+      const markupPct = internalCost > 0 ? grossProfit / internalCost : null;
+
+      return {
+        usableTH,
+        machinesUsed,
+        internalCost,
+        revenueGross,
+        discountAmount,
+        paymentFee,
+        revenueNet,
+        grossProfit,
+        grossMarginPct,
+        markupPct,
+      };
+    }
+
+    function readState() {
+      const totalTH = parseFloat($("in-total-th").value) || 0;
+      const avgMachineTH = parseFloat($("in-avg-machine-th").value) || 0;
+      const costPerMachineHour = parseFloat($("in-cost-machine").value) || 0;
+      const salePricePerTHHour = parseFloat($("in-sale-th").value) || 0;
+      const durationHours = parseFloat($("in-duration").value) || 0;
+      const utilizationPct = parseFloat($("in-util").value);
+      const utilDec = Number.isFinite(utilizationPct) ? utilizationPct / 100 : 0;
+      const feePct = (parseFloat($("in-fee").value) || 0) / 100;
+      const discountPct = (parseFloat($("in-discount").value) || 0) / 100;
+      const braiinsPHDay = parseFloat($("in-braiins-phday").value) || 0;
+      const btcPrice = parseFloat($("in-btc").value) || 0;
+
+      const machines = avgMachineTH > 0 ? totalTH / avgMachineTH : 0;
+      const costPerTHHour = avgMachineTH > 0 ? costPerMachineHour / avgMachineTH : 0;
+      const costPerPHDay = costPerTHHour * 1000 * 24;
+      const salePricePerPHDay = salePricePerTHHour * 1000 * 24;
+      const salePricePer100THHour = salePricePerTHHour * 100;
+      const salePricePerMachineHour = salePricePerTHHour * avgMachineTH;
+      // $/PH/hour = (USD/PH/day) / 24; $/TH/hour = (USD/PH/day) / 1000 / 24
+      const braiinsPerPHHour = braiinsPHDay / 24;
+      const braiinsPerTHDay = braiinsPHDay / 1000;
+      const braiinsPerTHHour = braiinsPHDay / 1000 / 24;
+      const braiinsPer100THHour = braiinsPerTHHour * 100;
+
+      const diffVsBraiinsPct =
+        braiinsPerTHHour > 0
+          ? (salePricePerTHHour - braiinsPerTHHour) / braiinsPerTHHour
+          : 0;
+
+      const base = {
+        totalTH,
+        avgMachineTH,
+        costPerMachineHour,
+        salePricePerTHHour,
+        durationHours,
+        utilizationDecimal: utilDec,
+        utilizationPct: Number.isFinite(utilizationPct) ? utilizationPct : 0,
+        discountPct,
+        feePct,
+        braiinsPHDay,
+        btcPrice,
+        machines,
+        costPerTHHour,
+        costPerPHDay,
+        salePricePerPHDay,
+        salePricePer100THHour,
+        salePricePerMachineHour,
+        braiinsPerPHHour,
+        braiinsPerTHDay,
+        braiinsPerTHHour,
+        braiinsPer100THHour,
+        diffVsBraiinsPct,
+      };
+
+      const period = computePeriod({
+        totalTH,
+        avgMachineTH,
+        costPerMachineHour,
+        salePricePerTHHour,
+        durationHours,
+        utilizationDecimal: utilDec,
+        discountPct,
+        feePct,
+      });
+
+      return { ...base, period };
+    }
+
+    function renderMetric(label, valueHtml) {
+      const d = document.createElement("div");
+      d.className = "metric";
+      d.innerHTML = `<div class="label">${label}</div><div class="value">${valueHtml}</div>`;
+      return d;
+    }
+
+    function renderTag(className, text) {
+      const s = document.createElement("span");
+      s.className = "tag " + className;
+      s.textContent = text;
+      return s;
+    }
+
+    function recalc() {
+      const s = readState();
+      const p = s.period;
+
+      // --- Braiins derived row
+      const bd = $("braiins-derived");
+      bd.innerHTML = "";
+      bd.appendChild(
+        renderMetric("Braiins $/PH/hour", fmtUsd(s.braiinsPerPHHour, 4))
+      );
+      bd.appendChild(renderMetric("Braiins $/TH/day", fmtUsd(s.braiinsPerTHDay, 4)));
+      bd.appendChild(renderMetric("Braiins $/TH/hour", fmtUsd(s.braiinsPerTHHour, 6)));
+      bd.appendChild(renderMetric("Braiins $/100TH/hour", fmtUsd(s.braiinsPer100THHour, 4)));
+
+      const bCmp = braiinsComparison(s.diffVsBraiinsPct);
+      const vsEl = $("braiins-vs-tag");
+      vsEl.innerHTML = "";
+      vsEl.appendChild(renderTag(bCmp.cls, bCmp.label + " (" + fmtPct(s.diffVsBraiinsPct) + " vs benchmark)"));
+
+      // --- Core metrics
+      const core = $("core-metrics");
+      core.innerHTML = "";
+
+      core.appendChild(renderMetric("Estimated machines (fleet)", fmtNum(s.machines, 3)));
+      core.appendChild(renderMetric("Internal cost / TH / hour", fmtUsd(s.costPerTHHour, 6)));
+      core.appendChild(renderMetric("Internal cost / PH / day", fmtUsd(s.costPerPHDay, 2)));
+      core.appendChild(renderMetric("Sale price / PH / day", fmtUsd(s.salePricePerPHDay, 2)));
+      core.appendChild(renderMetric("Sale price / 100 TH / hour", fmtUsd(s.salePricePer100THHour, 4)));
+      core.appendChild(renderMetric("Sale price / machine / hour", fmtUsd(s.salePricePerMachineHour, 4)));
+
+      if (p) {
+        core.appendChild(renderMetric("Total net revenue (period)", fmtUsd(p.revenueNet, 2)));
+        core.appendChild(renderMetric("Total internal cost (period)", fmtUsd(p.internalCost, 2)));
+        core.appendChild(renderMetric("Gross profit", fmtUsd(p.grossProfit, 2)));
+        core.appendChild(renderMetric("Gross margin", fmtPct(p.grossMarginPct)));
+        core.appendChild(
+          renderMetric(
+            "Markup over cost",
+            p.markupPct === null ? "—" : fmtPct(p.markupPct)
+          )
+        );
+      } else {
+        core.appendChild(renderMetric("Total net revenue (period)", "—"));
+        core.appendChild(renderMetric("Total internal cost (period)", "—"));
+        core.appendChild(renderMetric("Gross profit", "—"));
+        core.appendChild(renderMetric("Gross margin", "—"));
+        core.appendChild(renderMetric("Markup over cost", "—"));
+      }
+
+      core.appendChild(
+        renderMetric("Δ vs Braiins benchmark", fmtPct(s.diffVsBraiinsPct))
+      );
+      core.appendChild(
+        renderMetric("BTC ref (placeholder)", s.btcPrice > 0 ? fmtUsd(s.btcPrice, 0) : "—")
+      );
+
+      const marginTag = $("margin-status-tag");
+      marginTag.innerHTML = "";
+      if (p && Number.isFinite(p.grossMarginPct)) {
+        const mc = marginTagClass(p.grossMarginPct);
+        marginTag.appendChild(
+          renderTag(mc, marginTagLabel(p.grossMarginPct) + " · " + fmtPct(p.grossMarginPct))
+        );
+      } else {
+        marginTag.appendChild(renderTag("neutral", "—"));
+      }
+
+      // --- Fixed 24h revenue at 100%, 50%, 25%
+      const fixedHost = $("fixed-revenue");
+      fixedHost.innerHTML = "";
+      const levels = [
+        { label: "100% capacity · 24h", u: 1 },
+        { label: "50% capacity · 24h", u: 0.5 },
+        { label: "25% capacity · 24h", u: 0.25 },
+      ];
+      for (const row of levels) {
+        const pr = computePeriod({
+          totalTH: s.totalTH,
+          avgMachineTH: s.avgMachineTH,
+          costPerMachineHour: s.costPerMachineHour,
+          salePricePerTHHour: s.salePricePerTHHour,
+          durationHours: 24,
+          utilizationDecimal: row.u,
+          discountPct: s.discountPct,
+          feePct: s.feePct,
+        });
+        const val = pr ? fmtUsd(pr.revenueNet, 2) : "—";
+        fixedHost.appendChild(renderMetric(row.label + " net revenue", val));
+      }
+
+      // --- Recommendation
+      const rec = $("recommendation");
+      let recTitle = "Adjust inputs";
+      let recBody =
+        "Enter valid fleet and pricing assumptions. For hashpower rental, margin must cover operating spread versus the market benchmark.";
+      if (p && Number.isFinite(p.grossMarginPct)) {
+        const g = p.grossMarginPct;
+        if (g < 0.3) {
+          recTitle = "Pricing is too low for beta.";
+          recBody =
+            "Raise sale price per TH/hour or reduce machine cost exposure before scaling beta. Solo mining economics differ—this tool focuses on rental spread versus Braiins block probability market benchmark.";
+        } else if (g <= 0.8) {
+          recTitle = "Pricing is sustainable but conservative.";
+          recBody =
+            "Margins support ongoing beta if utilization holds. Monitor conversion and compare to Braiins-style pricing daily.";
+        } else {
+          recTitle = "Pricing is premium and acceptable for beta if conversion remains healthy.";
+          recBody =
+            "Strong gross margin on net revenue—ensure demand and payment fees stay predictable as you scale hashpower rental.";
+        }
+      }
+      rec.innerHTML = `<h3>${recTitle}</h3><p>${recBody}</p>`;
+
+      // --- Scenario table
+      const tbody = $("scenario-body");
+      tbody.innerHTML = "";
+      const scenarios = [
+        { name: "Conservative", u: 0.25 },
+        { name: "Base", u: 0.5 },
+        { name: "Aggressive", u: 1 },
+      ];
+      for (const sc of scenarios) {
+        const pr = computePeriod({
+          totalTH: s.totalTH,
+          avgMachineTH: s.avgMachineTH,
+          costPerMachineHour: s.costPerMachineHour,
+          salePricePerTHHour: s.salePricePerTHHour,
+          durationHours: 24,
+          utilizationDecimal: sc.u,
+          discountPct: s.discountPct,
+          feePct: s.feePct,
+        });
+        const tr = document.createElement("tr");
+        if (!pr) {
+          tr.innerHTML = `<td>${sc.name}</td><td>${fmtPct(sc.u)}</td><td colspan="5">—</td>`;
+          tbody.appendChild(tr);
+          continue;
+        }
+        const mg = pr.grossMarginPct;
+        const mClass = marginTagClass(mg);
+        const mLbl = marginTagLabel(mg);
+        tr.innerHTML = `
+          <td><strong>${sc.name}</strong></td>
+          <td>${fmtPct(sc.u)}</td>
+          <td>${fmtUsd(pr.revenueNet, 2)}</td>
+          <td>${fmtUsd(pr.internalCost, 2)}</td>
+          <td>${fmtUsd(pr.grossProfit, 2)}</td>
+          <td>${fmtPct(mg)}</td>
+          <td><span class="tag ${mClass}">${mLbl}</span></td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function fmtNum(n, digits) {
+      return Number(n).toLocaleString(undefined, {
+        maximumFractionDigits: digits,
+        minimumFractionDigits: 0,
+      });
+    }
+
+    function applyDefaults() {
+      $("in-total-th").value = DEFAULTS.totalTH;
+      $("in-avg-machine-th").value = DEFAULTS.avgMachineTH;
+      $("in-cost-machine").value = DEFAULTS.costPerMachineHour;
+      $("in-sale-th").value = DEFAULTS.salePricePerTHHour;
+      $("in-braiins-phday").value = DEFAULTS.braiinsPHDay;
+      $("in-btc").value = DEFAULTS.btcPrice;
+      $("in-duration").value = DEFAULTS.durationHours;
+      $("in-util").value = DEFAULTS.utilizationPct;
+      $("in-fee").value = DEFAULTS.feePct;
+      $("in-discount").value = DEFAULTS.discountPct;
+      recalc();
+    }
+
+    function buildSummary() {
+      const s = readState();
+      const p = s.period;
+      const b = braiinsComparison(s.diffVsBraiinsPct);
+      let text = `RentHashRate / Caos Enterprise — Margin summary\n\n`;
+      text += `Beta capacity: ${fmtNum(s.totalTH, 3)} TH/s across ~${fmtNum(s.machines, 3)} machines (avg ${fmtNum(s.avgMachineTH, 2)} TH/s each).\n`;
+      text += `Sale price: ${fmtUsd(s.salePricePerTHHour, 4)} per TH/hour; internal cost ${fmtUsd(s.costPerTHHour, 6)} per TH/hour.\n`;
+      text += `Window: ${s.durationHours} hours at ${typeof s.utilizationPct === "number" ? s.utilizationPct + "%" : fmtPct(s.utilizationDecimal)} utilization.\n`;
+      if (p) {
+        text += `Net revenue: ${fmtUsd(p.revenueNet, 2)}; internal cost: ${fmtUsd(p.internalCost, 2)}; gross profit: ${fmtUsd(p.grossProfit, 2)}.\n`;
+        text += `Gross margin: ${fmtPct(p.grossMarginPct)}; markup vs cost: ${p.markupPct === null ? "n/a" : fmtPct(p.markupPct)}.\n`;
+      }
+      text += `Versus Braiins benchmark ($${s.braiinsPHDay}/PH/day): our pricing is ${b.label} (${fmtPct(s.diffVsBraiinsPct)}).\n`;
+      text += `BTC reference (placeholder): ${s.btcPrice > 0 ? fmtUsd(s.btcPrice, 0) : "not set"}.\n`;
+      text += `\nNote: Model uses hashpower rental economics vs market benchmark; not a solo mining or block probability simulator.`;
+      return text;
+    }
+
+    function showToast(msg) {
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
+    }
+
+    const inputs = [
+      "in-total-th",
+      "in-avg-machine-th",
+      "in-cost-machine",
+      "in-sale-th",
+      "in-duration",
+      "in-util",
+      "in-fee",
+      "in-discount",
+      "in-btc",
+      "in-braiins-phday",
+    ];
+
+    inputs.forEach((id) => {
+      $(id).addEventListener("input", recalc);
+      $(id).addEventListener("change", recalc);
+    });
+
+    $("btn-reset").addEventListener("click", applyDefaults);
+    $("btn-copy").addEventListener("click", async () => {
+      const text = buildSummary();
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("Summary copied to clipboard");
+      } catch {
+        showToast("Copy failed — select and copy manually");
+      }
+    });
+
+    applyDefaults();
+  </script>
+</body>
+</html>
