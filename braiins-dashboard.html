@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Braiins metrics dashboard</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --border: #2d3a4d;
+      --text: #e7ecf3;
+      --muted: #8b9cb3;
+      --accent: #f7931a;
+      --bid: #3fb950;
+      --ask: #f85149;
+      --warn: #d29922;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 2.5rem;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    h1 {
+      margin: 0 0 0.35rem;
+      font-size: 1.35rem;
+      font-weight: 650;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 0.875rem;
+      max-width: 52rem;
+    }
+    .hint code {
+      background: var(--surface);
+      padding: 0.12rem 0.35rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .banner {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    .banner.error {
+      border-color: #a371f7;
+      color: #d2a8ff;
+    }
+    .banner.warn {
+      border-color: var(--warn);
+      color: #e3c78c;
+    }
+    .banner.ok {
+      border-color: #238636;
+      color: #7ee787;
+    }
+    .connectivity {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .grid {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    section {
+      margin-top: 1.5rem;
+    }
+    section h2 {
+      margin: 0 0 0.65rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+    }
+    .card .label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .card .value {
+      font-size: 1.05rem;
+      font-weight: 600;
+      word-break: break-word;
+    }
+    .card.bid .value { color: var(--bid); }
+    .card.ask .value { color: var(--ask); }
+    .card.accent .value { color: var(--accent); }
+    .bars {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.85rem;
+    }
+    .bar-row span:first-child {
+      width: 7.5rem;
+      flex-shrink: 0;
+      color: var(--muted);
+    }
+    .bar-track {
+      flex: 1;
+      height: 10px;
+      background: #0d1117;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+    .bar-fill.bid { background: linear-gradient(90deg, #238636, var(--bid)); }
+    .bar-fill.ask { background: linear-gradient(90deg, #da3633, var(--ask)); }
+    .bar-row span:last-child {
+      width: 3.5rem;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+    table.diag {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    table.diag th,
+    table.diag td {
+      text-align: left;
+      padding: 0.45rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    table.diag th {
+      color: var(--muted);
+      font-weight: 600;
+      width: 7rem;
+    }
+    .pill {
+      display: inline-block;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-right: 0.25rem;
+    }
+    .pill.ok { background: #23863633; color: var(--bid); }
+    .pill.bad { background: #f8514933; color: var(--ask); }
+    .pill.neutral { background: #30363d; color: var(--muted); }
+    pre.raw {
+      margin: 0.5rem 0 0;
+      padding: 0.75rem;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 0.72rem;
+      color: var(--muted);
+      max-height: 220px;
+    }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Braiins Hashpower — metrics dashboard</h1>
+      <p class="hint">
+        Generate data with <code>node braiins-metrics.js</code> (writes <code>braiins-report.json</code>).
+        Open this file via a local server so the browser can load JSON, e.g.
+        <code>cd JS-Scripts && python3 -m http.server 8000</code>
+        then visit <code>http://localhost:8000/braiins-dashboard.html</code>.
+      </p>
+      <div id="status" class="banner">Loading report…</div>
+      <div id="connectivity" class="connectivity" hidden></div>
+    </header>
+
+    <section>
+      <h2>Snapshot</h2>
+      <div class="grid" id="snapshot"></div>
+    </section>
+
+    <section>
+      <h2>Order book</h2>
+      <div class="grid" id="orderbook"></div>
+    </section>
+
+    <section>
+      <h2>Trades</h2>
+      <div class="grid" id="trades"></div>
+    </section>
+
+    <section>
+      <h2>USD benchmarks (manual)</h2>
+      <div class="grid" id="usd"></div>
+    </section>
+
+    <section>
+      <h2>Depth (visible book)</h2>
+      <div class="card">
+        <div class="bars" id="depth-bars"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Endpoint diagnostics</h2>
+      <div class="card" id="diag-table"></div>
+    </section>
+
+    <section>
+      <h2>Raw preview (JSON report)</h2>
+      <div class="card"><pre class="raw" id="raw-json"></pre></div>
+    </section>
+
+    <footer>Local-only dashboard — API key stays in Node / <code>.env</code>.</footer>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function fmtNum(n, digits = 4) {
+      if (n === null || n === undefined || Number.isNaN(n)) return "—";
+      return Number(n).toLocaleString(undefined, {
+        maximumFractionDigits: digits,
+        minimumFractionDigits: 0,
+      });
+    }
+
+    function fmtSats(s) {
+      if (s === null || s === undefined || Number.isNaN(s)) return "—";
+      return `${fmtNum(s, 2)} sats`;
+    }
+
+    function card(label, value, cls = "") {
+      const d = document.createElement("div");
+      d.className = "card " + cls;
+      d.innerHTML = `<div class="label">${label}</div><div class="value">${value}</div>`;
+      return d;
+    }
+
+    function barRow(label, value, max, kind) {
+      const pct = max > 0 ? Math.round((value / max) * 100) : 0;
+      const row = document.createElement("div");
+      row.className = "bar-row";
+      row.innerHTML = `
+        <span>${label}</span>
+        <div class="bar-track"><div class="bar-fill ${kind}" style="width:${pct}%"></div></div>
+        <span>${fmtNum(value, 2)}</span>
+      `;
+      return row;
+    }
+
+    function renderDiagnostics(endpointDiagnostics) {
+      const host = document.createElement("div");
+      if (!endpointDiagnostics) {
+        host.textContent = "No endpointDiagnostics in report (regenerate with latest script).";
+        return host;
+      }
+      const table = document.createElement("table");
+      table.className = "diag";
+      const head = document.createElement("thead");
+      head.innerHTML =
+        "<tr><th>Endpoint</th><th>Status</th><th>Content-Type</th><th>Signals</th><th>Notes</th></tr>";
+      table.appendChild(head);
+      const body = document.createElement("tbody");
+      for (const [name, d] of Object.entries(endpointDiagnostics)) {
+        const tr = document.createElement("tr");
+        const pills = [];
+        if (d.looksLikeJson) pills.push('<span class="pill ok">JSON</span>');
+        if (d.looksLikeHtml) pills.push('<span class="pill bad">HTML</span>');
+        if (!d.looksLikeJson && !d.looksLikeHtml && d.httpStatus)
+          pills.push('<span class="pill neutral">?</span>');
+        const prev =
+          d.bodyPreview &&
+          (d.bodyPreview.length > 180 ? d.bodyPreview.slice(0, 180) + "…" : d.bodyPreview);
+        const notes = [d.error && `Error: ${String(d.error).slice(0, 120)}`, prev && `Preview: ${prev}`]
+          .filter(Boolean)
+          .join("<br/>");
+        tr.innerHTML = `
+          <td><strong>${name}</strong><br/><span style="color:var(--muted)">${d.path || "—"}</span></td>
+          <td>${d.httpStatus ?? "—"}</td>
+          <td style="word-break:break-all">${d.contentType || "—"}</td>
+          <td>${pills.join(" ") || "—"}</td>
+          <td style="font-size:0.78rem;color:var(--muted)">${notes || "—"}</td>
+        `;
+        body.appendChild(tr);
+      }
+      table.appendChild(body);
+      host.appendChild(table);
+      return host;
+    }
+
+    async function load() {
+      const status = $("status");
+      try {
+        const res = await fetch("./braiins-report.json", { cache: "no-store" });
+        if (!res.ok) {
+          status.className = "banner error";
+          status.textContent =
+            "Could not load braiins-report.json (" +
+            res.status +
+            "). Run `node braiins-metrics.js` first and serve this folder over HTTP.";
+          return;
+        }
+        const report = await res.json();
+        status.className = "banner ok";
+        status.textContent = `Report file loaded · ${report.timestamp || "ok"} · OpenAPI site: ${report.siteBaseURL || report.baseURL || "—"}`;
+
+        const diag = report.endpointDiagnostics || {};
+        const diagVals = Object.values(diag).filter(Boolean);
+        const anyHtml = diagVals.some((d) => d.looksLikeHtml);
+        const allJson =
+          diagVals.length > 0 && diagVals.every((d) => d.looksLikeJson && !d.looksLikeHtml);
+        const eff = report.effectiveSpotBaseURL || report.resolvedApiBaseURL || "—";
+        const spotPref = report.spotPathPrefix ? ` · spot prefix: ${report.spotPathPrefix}` : "";
+        const env = report.usedEnvOverrides || {};
+        const envLine = [
+          env.BRAIINS_API_BASE_URL && "BRAIINS_API_BASE_URL",
+          env.BRAIINS_SPOT_PREFIX && "BRAIINS_SPOT_PREFIX",
+        ]
+          .filter(Boolean)
+          .join(", ");
+        const conn = $("connectivity");
+        conn.hidden = false;
+        const liveClass = allJson ? "ok" : anyHtml ? "warn" : "";
+        const liveMsg = allJson
+          ? `Live API (Node): all sampled endpoints returned JSON · base ${eff}${spotPref}`
+          : anyHtml
+            ? `Live API (Node): one or more endpoints returned HTML (SPA or wrong base). Metrics may be empty. Node used base: ${eff}${spotPref}. Try BRAIINS_API_BASE_URL or BRAIINS_SPOT_PREFIX in .env.${envLine ? " Active env overrides: " + envLine + "." : ""}`
+            : `Live API (Node): check diagnostics below · base ${eff}${spotPref}`;
+        conn.innerHTML = `
+          <div class="banner ok">Connection 1 — Report: this page only reads <code>braiins-report.json</code> from the same folder (working).</div>
+          <div class="banner ${liveClass}">${liveMsg}</div>
+          ${report.specServerUrls && report.specServerUrls.length ? `<div class="banner">OpenAPI <code>servers</code> (from last run): ${report.specServerUrls.map((u) => `<code>${u}</code>`).join(" · ")}</div>` : ""}
+        `;
+
+        const snap = $("snapshot");
+        snap.appendChild(card("Market unit", report.marketUnit || "—"));
+        snap.appendChild(card("Source", report.source || "—", "accent"));
+
+        const ob = report.orderBookMetrics || {};
+        const obGrid = $("orderbook");
+        obGrid.appendChild(card("Unit", ob.unit || "—"));
+        obGrid.appendChild(card("Best bid", fmtSats(ob.bestBidSats), "bid"));
+        obGrid.appendChild(card("Best ask", fmtSats(ob.bestAskSats), "ask"));
+        obGrid.appendChild(card("Spread", ob.spreadSats != null ? fmtSats(ob.spreadSats) : "—"));
+        obGrid.appendChild(card("Mid", ob.midPriceSats != null ? fmtSats(ob.midPriceSats) : "—"));
+        obGrid.appendChild(card("Bid (BTC)", fmtNum(ob.bestBidBTC, 8)));
+        obGrid.appendChild(card("Ask (BTC)", fmtNum(ob.bestAskBTC, 8)));
+        obGrid.appendChild(card("Bid levels", String(ob.visibleBidLevels ?? "—")));
+        obGrid.appendChild(card("Ask levels", String(ob.visibleAskLevels ?? "—")));
+
+        const tm = report.tradeMetrics || {};
+        const tg = $("trades");
+        tg.appendChild(card("Trades (sample)", String(tm.tradesCount ?? "—")));
+        tg.appendChild(card("Avg price", fmtSats(tm.avgTradePriceSats)));
+        tg.appendChild(card("Min", fmtSats(tm.minTradePriceSats)));
+        tg.appendChild(card("Max", fmtSats(tm.maxTradePriceSats)));
+
+        const usd = report.usdBenchmarks || {};
+        const ug = $("usd");
+        ug.appendChild(card("USD / PH / day", fmtNum(usd.usdPerPHDay, 4)));
+        ug.appendChild(card("USD / PH / hour", fmtNum(usd.usdPerPHHour, 6)));
+        ug.appendChild(card("USD / 100TH / day", fmtNum(usd.usdPer100THDay, 4)));
+        ug.appendChild(card("USD / 100TH / hour", fmtNum(usd.usdPer100THHour, 6)));
+        ug.appendChild(card("USD / 10TH / hour", fmtNum(usd.usdPer10THHour, 6)));
+
+        const depth = $("depth-bars");
+        const bidHr = ob.visibleBidHashrate || 0;
+        const askHr = ob.visibleAskHashrate || 0;
+        const maxHr = Math.max(bidHr, askHr, 1);
+        depth.appendChild(barRow("Bid HR (sum)", bidHr, maxHr, "bid"));
+        depth.appendChild(barRow("Ask HR (sum)", askHr, maxHr, "ask"));
+        const bl = ob.visibleBidLevels || 0;
+        const al = ob.visibleAskLevels || 0;
+        const maxL = Math.max(bl, al, 1);
+        depth.appendChild(barRow("Bid levels", bl, maxL, "bid"));
+        depth.appendChild(barRow("Ask levels", al, maxL, "ask"));
+
+        $("diag-table").innerHTML = "";
+        $("diag-table").appendChild(renderDiagnostics(report.endpointDiagnostics));
+
+        $("raw-json").textContent = JSON.stringify(report, null, 2);
+      } catch (e) {
+        status.className = "banner error";
+        status.textContent =
+          "Failed to load report: " +
+          (e && e.message ? e.message : String(e)) +
+          " — use a local HTTP server (file:// blocks fetch).";
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
