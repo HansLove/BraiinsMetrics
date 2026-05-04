@@ -2,10 +2,11 @@
   "name": "js-scripts",
   "version": "1.0.0",
   "type": "module",
-  "description": "",
+  "description": "After editing braiins-dashboard.html, run npm run pages:sync so docs/ matches (GitHub Pages).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pages:sync": "node scripts/sync-github-pages.mjs"
   },
   "keywords": [],
   "author": "",

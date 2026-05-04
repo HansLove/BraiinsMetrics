@@ -1,0 +1,137 @@
+{
+  "timestamp": "2026-05-04T11:21:42.869Z",
+  "source": "Braiins Hashpower API",
+  "baseURL": "https://hashpower.braiins.com",
+  "siteBaseURL": "https://hashpower.braiins.com",
+  "specServerUrls": [
+    "https://hashpower.braiins.com/api/v1"
+  ],
+  "resolvedApiBaseURL": "https://hashpower.braiins.com/v1",
+  "spotPathPrefix": "",
+  "effectiveSpotBaseURL": "https://hashpower.braiins.com/v1",
+  "usedEnvOverrides": {
+    "BRAIINS_API_BASE_URL": false,
+    "BRAIINS_SPOT_PREFIX": false
+  },
+  "discoveredEndpoints": {
+    "settingsPath": "/spot/settings",
+    "orderBookPath": "/spot/orderbook",
+    "tradesPath": "/spot/trades",
+    "chartPath": "/spot/bars",
+    "feePath": "/spot/fee"
+  },
+  "marketUnit": "EH/day",
+  "orderBookMetrics": {
+    "unit": "EH/day",
+    "bestBidSats": 61327000,
+    "bestAskSats": 47125000,
+    "bestBidBTC": 0.61327,
+    "bestAskBTC": 0.47125,
+    "spreadSats": -14202000,
+    "spreadBTC": -0.14202,
+    "midPriceSats": 54226000,
+    "midPriceBTC": 0.54226,
+    "visibleBidLevels": 144,
+    "visibleAskLevels": 8,
+    "visibleBidHashrate": 2112.9371308342966,
+    "visibleAskHashrate": 2112.9371308342497
+  },
+  "tradeMetrics": {
+    "tradesCount": 100,
+    "avgTradePriceSats": 49421329.02991765,
+    "avgTradePriceBTC": 0.4942132902991765,
+    "minTradePriceSats": 49298067.474027,
+    "maxTradePriceSats": 49505239.218332
+  },
+  "usdBenchmarks": {
+    "usdPerPHDay": 38,
+    "usdPerPHHour": 1.5833333333333333,
+    "usdPer100THDay": 3.8000000000000003,
+    "usdPer100THHour": 0.15833333333333333,
+    "usdPer10THHour": 0.01583333333333333
+  },
+  "endpointDiagnostics": {
+    "settings": {
+      "path": "/spot/settings",
+      "params": {},
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "rawType": "object",
+      "looksLikeHtml": false,
+      "looksLikeJson": true,
+      "error": null,
+      "bodyPreview": "{\"created\":\"2025-04-16T14:56:38.156Z\",\"min_limited_bid_duration_s\":1800,\"status\":\"SPOT_INSTRUMENT_STATUS_ACTIVE\",\"max_bids_per_subaccount\":10,\"max_bid_price_sat\":500000000,\"bid_grace_period_s\":900,\"max_ask_price_sat\":0,\"min_bid_price_decrease_period_s\":600,\"max_bid_amount_sat\":100000000,\"hr_unit\":\"EH/day\",\"max_bid_speed_limit_ph\":0,\"max_limited_bid_amount_sat\":100000000,\"tick_size_sat\":1000,\"min_bid_price_sat\":0,\"max_asks_per_subaccount\":10,\"min_ask_price_sat\":1000000,\"ask_grace_period_s\":60,\"mi…"
+    },
+    "orderBook": {
+      "path": "/spot/orderbook",
+      "params": {},
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "rawType": "object",
+      "looksLikeHtml": false,
+      "looksLikeJson": true,
+      "error": null,
+      "bodyPreview": "{\"asks\":[{\"hr_available_ph\":113.98274145334,\"hr_matched_ph\":113.98274145334,\"price_sat\":47125000},{\"hr_available_ph\":179.15278788344,\"hr_matched_ph\":179.15278788344,\"price_sat\":47363000},{\"hr_available_ph\":325.92051643175,\"hr_matched_ph\":325.92051643175,\"price_sat\":47601000},{\"hr_available_ph\":398.81798163921,\"hr_matched_ph\":398.81798163921,\"price_sat\":47839000},{\"hr_available_ph\":478.08588914238,\"hr_matched_ph\":478.08588914238,\"price_sat\":48077000},{\"hr_available_ph\":616.97721428413,\"hr_matched…"
+    },
+    "trades": {
+      "path": "/spot/trades",
+      "params": {
+        "limit": 100
+      },
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "rawType": "object",
+      "looksLikeHtml": false,
+      "looksLikeJson": true,
+      "error": null,
+      "bodyPreview": "{\"trades\":[{\"timestamp\":\"2026-05-04T11:20:55Z\",\"volume_m\":7464.487014,\"price_sat\":49443697.04579},{\"timestamp\":\"2026-05-04T11:20:40Z\",\"volume_m\":6847.796178,\"price_sat\":49428169.052393},{\"timestamp\":\"2026-05-04T11:20:25Z\",\"volume_m\":6965.641018,\"price_sat\":49435861.328295},{\"timestamp\":\"2026-05-04T11:20:10Z\",\"volume_m\":8039.597038,\"price_sat\":49447221.233998},{\"timestamp\":\"2026-05-04T11:19:55Z\",\"volume_m\":7823.955057,\"price_sat\":49449249.858444},{\"timestamp\":\"2026-05-04T11:19:40Z\",\"volume_m\":684…"
+    },
+    "chartBars": {
+      "path": "/spot/bars",
+      "params": {
+        "interval": "1h",
+        "limit": 24
+      },
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "rawType": "object",
+      "looksLikeHtml": false,
+      "looksLikeJson": true,
+      "error": null,
+      "bodyPreview": "{\"bars\":[{\"open\":49447221.233998,\"vwap\":49437630.141097,\"volume\":21853.034234,\"timestamp\":\"2026-05-04T11:20:00Z\",\"close\":49428169.052393,\"high\":49447221.233998,\"low\":49428169.052393},{\"open\":49390440.774396,\"vwap\":49425460.386894,\"volume\":28638.702487,\"timestamp\":\"2026-05-04T11:19:00Z\",\"close\":49449249.858444,\"high\":49449249.858444,\"low\":49390440.774396},{\"open\":49402476.115428,\"vwap\":49419356.783376,\"volume\":26927.093796,\"timestamp\":\"2026-05-04T11:18:00Z\",\"close\":49441179.14155,\"high\":49441179.…"
+    },
+    "fee": {
+      "path": "/spot/fee",
+      "params": {},
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "rawType": "object",
+      "looksLikeHtml": false,
+      "looksLikeJson": true,
+      "error": null,
+      "bodyPreview": "{\"spot_fees\":[{\"symbol\":\"SHA256_BTC\",\"fee\":{\"fee_rate_pct\":0},\"fee_type\":\"SPOT_FEE_TYPE_BUY\"}]}"
+    }
+  },
+  "rawPreview": {
+    "settings": [
+      "created",
+      "min_limited_bid_duration_s",
+      "status",
+      "max_bids_per_subaccount",
+      "max_bid_price_sat",
+      "bid_grace_period_s",
+      "max_ask_price_sat",
+      "min_bid_price_decrease_period_s",
+      "max_bid_amount_sat",
+      "hr_unit",
+      "max_bid_speed_limit_ph",
+      "max_limited_bid_amount_sat",
+      "tick_size_sat",
+      "min_bid_price_sat",
+      "max_asks_per_subaccount"
+    ],
+    "chartBarsSample": [
+      "bars"
+    ]
+  }
+}
