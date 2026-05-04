@@ -293,6 +293,20 @@
       font-variant-numeric: tabular-nums;
       line-height: 1.45;
     }
+    .kpi-unit-hint {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      line-height: 1.4;
+    }
+    .kpi-unit-hint strong {
+      color: var(--text);
+      font-weight: 700;
+    }
     .kpi-tile-sub .accent { color: var(--accent); font-weight: 600; }
     .kpi-tile-sub .usd { color: var(--accent-2); font-weight: 600; }
     .kpi-tile.spread-pos .kpi-tile-value { color: var(--bid); }
@@ -338,7 +352,17 @@
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+    .book-unit-hint {
+      display: block;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      color: var(--muted);
       margin-bottom: 0.5rem;
+      line-height: 1.35;
     }
     .book-card.bid-side .book-label { color: var(--bid); }
     .book-card.ask-side .book-label { color: var(--ask); }
@@ -594,7 +618,7 @@
         <svg class="kpi-tile-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="currentColor" stroke-width="1.5"/>
         </svg>
-        <div class="eyebrow">Mid price · market unit</div>
+        <div class="eyebrow" id="kpi-mid-eyebrow">Mid · sats per unit</div>
         <div class="kpi-tile-value value-target" id="kpi-mid-sats">—</div>
         <div class="kpi-tile-sub" id="kpi-mid-sub"></div>
       </div>
@@ -603,7 +627,7 @@
           <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
           <path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.5"/>
         </svg>
-        <div class="eyebrow">Mid · per PH / day</div>
+        <div class="eyebrow" id="kpi-ph-eyebrow">Mid · sats per PH / day</div>
         <div class="kpi-tile-value value-target" id="kpi-ph-sats">—</div>
         <div class="kpi-tile-sub" id="kpi-ph-sub"></div>
       </div>
@@ -611,7 +635,7 @@
         <svg class="kpi-tile-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M4 16l8-8 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
-        <div class="eyebrow">Spread (ask − bid)</div>
+        <div class="eyebrow" id="kpi-spread-eyebrow">Spread (ask − bid)</div>
         <div class="kpi-tile-value value-target" id="kpi-spread-sats">—</div>
         <div class="kpi-tile-sub" id="kpi-spread-sub"></div>
       </div>
@@ -622,12 +646,14 @@
       <div class="book-row">
         <div class="book-card bid-side">
           <div class="book-label">Best bid</div>
+          <span class="book-unit-hint" id="book-bid-unit"></span>
           <div class="book-sats value-target" id="book-bid-sats">—</div>
           <div class="book-line">≈ <strong id="book-bid-btc">—</strong> BTC</div>
           <div class="book-line usd">≈ <strong id="book-bid-usd">—</strong></div>
         </div>
         <div class="book-card ask-side">
           <div class="book-label">Best ask</div>
+          <span class="book-unit-hint" id="book-ask-unit"></span>
           <div class="book-sats value-target" id="book-ask-sats">—</div>
           <div class="book-line">≈ <strong id="book-ask-btc">—</strong> BTC</div>
           <div class="book-line usd">≈ <strong id="book-ask-usd">—</strong></div>
@@ -656,7 +682,7 @@
 
     <section class="section">
       <h2 class="section-title">Recent trades</h2>
-      <p class="section-note">Sample of latest fills—priced in sats with BTC and USD equivalents using the BTC reference above.</p>
+      <p class="section-note" id="trades-unit-note">Sample of latest fills—priced in sats with BTC and USD equivalents using the BTC reference above.</p>
       <div class="trades-grid" id="trades-wrap">
         <div class="trade-card">
           <div class="label">Average</div>
@@ -950,26 +976,86 @@
 
       const ob = report.orderBookMetrics || {};
       const unit = report.marketUnit || ob.unit || "—";
+      const unitIsEhPerDay = /EH/i.test(String(unit)) && /day/i.test(String(unit));
 
-      /* KPI — mid market unit */
+      $("kpi-mid-eyebrow").textContent = `Mid · sats per ${unit}`;
+      $("kpi-spread-eyebrow").textContent = `Spread · sats (${unit})`;
+
+      const unitLooksPhPerDay =
+        /PH/i.test(String(unit)) && /day/i.test(String(unit)) && !/EH/i.test(String(unit));
+      $("kpi-ph-eyebrow").textContent = unitIsEhPerDay
+        ? "Mid · sats per PH / day (derived)"
+        : unitLooksPhPerDay
+          ? "Mid · sats per PH / day"
+          : "Mid · sats per PH / day (scaled)";
+
+      $("book-bid-unit").textContent = `All ladder prices: sats per ${unit}`;
+      $("book-ask-unit").textContent = `All ladder prices: sats per ${unit}`;
+      $("trades-unit-note").textContent =
+        `Sample trade prices are in the same denomination as the book (sats per ${unit}), with BTC and USD equivalents using the BTC reference above.`;
+
+      /* KPI — mid: same unit as Braiins order book (e.g. EH/day), not per PH */
       const midSats = ob.midPriceSats;
       $("kpi-mid-sats").textContent = midSats != null ? fmtSats(midSats) : "—";
       const midBtc = ob.midPriceBTC != null ? ob.midPriceBTC : satsToBtc(midSats);
       const midUsd = satsToUsd(midSats, btc);
-      $("kpi-mid-sub").innerHTML =
-        midBtc != null && !Number.isNaN(midBtc)
-          ? `≈ <span class="accent">${fmtNum(midBtc, 8)}</span> BTC · <span class="usd">${midUsd != null ? fmtUsdAmount(midUsd, 2) : "—"}</span>`
-          : "";
+      const midSub = $("kpi-mid-sub");
+      midSub.textContent = "";
+      const midHint = document.createElement("span");
+      midHint.className = "kpi-unit-hint";
+      midHint.append(
+        document.createTextNode("Denominator: "),
+        Object.assign(document.createElement("strong"), { textContent: unit }),
+        document.createTextNode(
+          " — this is not per PH. Below, PH/day is derived only when the API uses EH/day."
+        )
+      );
+      midSub.appendChild(midHint);
+      if (midBtc != null && !Number.isNaN(midBtc)) {
+        const conv = document.createElement("span");
+        conv.innerHTML = `≈ <span class="accent">${fmtNum(midBtc, 8)}</span> BTC · <span class="usd">${midUsd != null ? fmtUsdAmount(midUsd, 2) : "—"}</span> at spot BTC`;
+        midSub.appendChild(conv);
+      }
 
-      /* KPI — mid per PH/day: EH/day price / 1000 → sats per PH/day */
-      const midPerPhSats = midSats != null ? midSats / 1000 : null;
+      /* KPI — mid per PH/day: EH/day → ÷1000; if API already PH/day, same as mid */
+      const midPerPhSats =
+        midSats == null
+          ? null
+          : unitIsEhPerDay
+            ? midSats / 1000
+            : midSats;
       $("kpi-ph-sats").textContent = midPerPhSats != null ? fmtSats(midPerPhSats) : "—";
       const midPhBtc = satsToBtc(midPerPhSats);
       const midPhUsd = satsToUsd(midPerPhSats, btc);
-      $("kpi-ph-sub").innerHTML =
-        midPhBtc != null
-          ? `≈ <span class="accent">${fmtNum(midPhBtc, 8)}</span> BTC · <span class="usd">${midPhUsd != null ? fmtUsdAmount(midPhUsd, 2) : "—"}</span> per PH/day`
-          : "";
+      const phSub = $("kpi-ph-sub");
+      phSub.textContent = "";
+      if (unitIsEhPerDay) {
+        const phHint = document.createElement("span");
+        phHint.className = "kpi-unit-hint";
+        phHint.append(
+          document.createTextNode("Derived: mid sats per EH/day ÷ 1,000 → "),
+          Object.assign(document.createElement("strong"), { textContent: "sats per PH/day" }),
+          document.createTextNode(".")
+        );
+        phSub.appendChild(phHint);
+      } else if (unitLooksPhPerDay) {
+        const phHint = document.createElement("span");
+        phHint.className = "kpi-unit-hint";
+        phHint.textContent =
+          "API unit is already PH/day — this card matches the mid tile (no EH→PH conversion).";
+        phSub.appendChild(phHint);
+      } else {
+        const phHint = document.createElement("span");
+        phHint.className = "kpi-unit-hint";
+        phHint.textContent =
+          "PH/day shown as mid ÷ 1,000 — verify hr_unit in settings if your market unit is not EH/day.";
+        phSub.appendChild(phHint);
+      }
+      if (midPhBtc != null) {
+        const conv = document.createElement("span");
+        conv.innerHTML = `≈ <span class="accent">${fmtNum(midPhBtc, 8)}</span> BTC · <span class="usd">${midPhUsd != null ? fmtUsdAmount(midPhUsd, 2) : "—"}</span> per PH/day at spot BTC`;
+        phSub.appendChild(conv);
+      }
 
       /* KPI — spread */
       const sp = ob.spreadSats;
